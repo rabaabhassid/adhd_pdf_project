@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="teal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My sessions · Bloom Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font: "Open Sans", Verdana, "Segoe UI", system-ui, sans-serif;
+      --radius: 22px;
+      --radius-btn: 14px;
+      --radius-inner: 16px;
+      --container: 1280px;
+      --transition: 180ms ease;
+      --layout-duration: 0.48s;
+      --layout-ease: cubic-bezier(0.33, 0.86, 0.24, 1);
+    }
+
+    html[data-theme="teal"] {
+      --bg: #E3F2F9;
+      --text: #1D3557;
+      --accent: #457B9D;
+      --accent-text: #F1FAEE;
+      --drop-border: #457B9D;
+      --muted: rgba(29, 53, 87, 0.72);
+      --focus-ring: #1D3557;
+      --surface: rgba(255, 255, 255, 0.66);
+      --surface-strong: rgba(255, 255, 255, 0.88);
+      --border-soft: rgba(69, 123, 157, 0.22);
+      --shadow-soft: 0 24px 70px rgba(29, 53, 87, 0.12);
+      --logo-ink: #142e57;
+      --logo-page: #3f79a8;
+      --logo-petal: #d8e9fa;
+      --logo-drop: #c7ddf4;
+    }
+
+    html[data-theme="warm"] {
+      --bg: #F5E9E2;
+      --text: #3E3923;
+      --accent: #7DB794;
+      --accent-text: #213625;
+      --drop-border: #8BC4A0;
+      --muted: rgba(62, 57, 35, 0.75);
+      --focus-ring: #3E3923;
+      --surface: rgba(255, 252, 247, 0.68);
+      --surface-strong: rgba(255, 252, 247, 0.9);
+      --border-soft: rgba(125, 183, 148, 0.3);
+      --shadow-soft: 0 24px 70px rgba(62, 57, 35, 0.11);
+      --logo-ink: #3e3923;
+      --logo-page: #7db794;
+      --logo-petal: #ead8c9;
+      --logo-drop: #d9c3a5;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.6;
+      letter-spacing: 0.015em;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.78), transparent 32rem),
+        radial-gradient(circle at 82% 18%, color-mix(in srgb, var(--accent), transparent 76%), transparent 24rem),
+        linear-gradient(135deg, var(--bg), rgba(255, 255, 255, 0.32));
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-shell {
+      width: min(100% - 2rem, var(--container));
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 1.35rem 0 3rem;
+    }
+
+    .site-header.study-site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding: 0.35rem 0 1.75rem;
+    }
+
+    .site-header-start {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.85rem 1.25rem;
+      min-width: 0;
+    }
+
+    .header-secondary-link {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-decoration: none;
+      white-space: nowrap;
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: color var(--transition), background var(--transition), border-color var(--transition);
+    }
+
+    .header-secondary-link:hover {
+      color: var(--text);
+      background: var(--surface);
+      border-color: var(--border-soft);
+    }
+
+    .header-secondary-link:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .bloom-logo {
+      position: relative;
+      width: 3.25rem;
+      height: 2.8rem;
+      flex: 0 0 auto;
+    }
+
+    .logo-book,
+    .logo-page,
+    .logo-petal,
+    .logo-drop,
+    .logo-spine {
+      position: absolute;
+    }
+
+    .logo-book {
+      top: 0.1rem;
+      left: 50%;
+      width: 2.55rem;
+      height: 1.65rem;
+      transform: translateX(-50%);
+      filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.1));
+    }
+
+    .logo-page {
+      top: 0;
+      width: 1.17rem;
+      height: 1.58rem;
+      transform-origin: bottom center;
+    }
+
+    .logo-page-left {
+      left: 0.05rem;
+      background: var(--logo-ink);
+      border-radius: 0.08rem 0.72rem 0.18rem 0.08rem;
+      transform: skewY(8deg);
+    }
+
+    .logo-page-right {
+      right: 0.05rem;
+      background: var(--logo-page);
+      border-radius: 0.72rem 0.08rem 0.08rem 0.18rem;
+      transform: skewY(-8deg);
+    }
+
+    .logo-spine {
+      left: 50%;
+      bottom: 0.08rem;
+      width: 0.16rem;
+      height: 1.38rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.88);
+      transform: translateX(-50%);
+    }
+
+    .logo-petal {
+      bottom: 0.42rem;
+      width: 1.16rem;
+      height: 0.72rem;
+      background: var(--logo-petal);
+      opacity: 0.95;
+    }
+
+    .logo-petal-left {
+      left: 0.06rem;
+      border-radius: 999px 999px 0 999px;
+      transform: rotate(10deg);
+    }
+
+    .logo-petal-right {
+      right: 0.06rem;
+      border-radius: 999px 999px 999px 0;
+      transform: rotate(-10deg);
+    }
+
+    .logo-drop {
+      left: 50%;
+      bottom: 0;
+      width: 0.86rem;
+      height: 0.78rem;
+      border-radius: 0 0 999px 999px;
+      background: var(--logo-drop);
+      transform: translateX(-50%);
+    }
+
+    .brand-name {
+      display: grid;
+      line-height: 1.05;
+    }
+
+    .brand-name strong {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--logo-ink);
+    }
+
+    .brand-name span {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--logo-page);
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+    }
+
+    .study-header-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.45rem;
+    }
+
+    .study-menu-anchor {
+      position: relative;
+    }
+
+    .study-tool-btn {
+      font-family: var(--font);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.48rem 0.78rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+      white-space: nowrap;
+    }
+
+    .study-tool-btn:hover {
+      background: var(--surface-strong);
+      border-color: color-mix(in srgb, var(--accent), transparent 40%);
+    }
+
+    .study-tool-btn[aria-expanded="true"] {
+      background: rgba(255, 255, 255, 0.88);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent), transparent 55%);
+    }
+
+    .study-tool-btn:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .study-popover {
+      position: absolute;
+      top: calc(100% + 0.35rem);
+      right: 0;
+      z-index: 40;
+      min-width: 12.5rem;
+      padding: 0.55rem 0.5rem;
+      border-radius: var(--radius-inner);
+      border: 1px solid var(--border-soft);
+      background: var(--surface-strong);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(12px);
+    }
+
+    .study-popover-lead {
+      margin: 0 0.35rem 0.45rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .study-popover-option {
+      display: block;
+      width: 100%;
+      font-family: var(--font);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-align: left;
+      padding: 0.5rem 0.55rem;
+      margin: 0.12rem 0;
+      border-radius: 10px;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    .study-popover-option:hover {
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .study-popover-option[aria-pressed="true"] {
+      background: var(--accent);
+      color: var(--accent-text);
+    }
+
+    .study-popover-option:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 1px;
+    }
+
+    .reading-scale-root {
+      font-size: 0.8125rem;
+      line-height: 1.62;
+      transition: font-size var(--layout-duration) var(--layout-ease);
+    }
+
+    html[data-study-scale="2x"] .reading-scale-root {
+      font-size: 1.0625rem;
+      line-height: 1.64;
+    }
+
+    html[data-study-scale="3x"] .reading-scale-root {
+      font-size: 1.375rem;
+      line-height: 1.66;
+    }
+
+    .sessions-main {
+      max-width: 100%;
+    }
+
+    .sessions-hero {
+      margin-bottom: 1.75rem;
+    }
+
+    .eyebrow {
+      margin: 0 0 0.55rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.85rem, 4.5vw, 2.45rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      margin: 0.65rem 0 0;
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.55;
+      max-width: 36rem;
+    }
+
+    .sessions-list-wrap {
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      background: var(--surface-strong);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+    }
+
+    .sessions-status {
+      margin: 0;
+      padding: 1.35rem 1.5rem;
+      color: var(--muted);
+      font-size: 0.98rem;
+      text-align: center;
+    }
+
+    .sessions-status.is-error {
+      color: var(--text);
+    }
+
+    .sessions-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .session-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: stretch;
+      border-top: 1px solid var(--border-soft);
+      transition: background var(--transition);
+    }
+
+    .session-item:first-child {
+      border-top: 0;
+    }
+
+    .session-item:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .session-row {
+      display: block;
+      padding: 1.05rem 0 1.05rem 1.35rem;
+      text-decoration: none;
+      color: inherit;
+      border-top: 0;
+      min-width: 0;
+      transition: background var(--transition);
+    }
+
+    .session-item .session-row:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: -2px;
+    }
+
+    .session-delete {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.75rem;
+      margin: 0;
+      padding: 0;
+      border: none;
+      border-left: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color var(--transition), background var(--transition);
+    }
+
+    .session-item:hover .session-delete {
+      border-left-color: var(--border-soft);
+    }
+
+    .session-delete:hover {
+      color: #b42318;
+      background: rgba(180, 35, 24, 0.06);
+    }
+
+    .session-delete:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: -2px;
+      color: var(--text);
+    }
+
+    .session-delete svg {
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .session-delete:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .session-row-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.35rem 1rem;
+    }
+
+    .session-title {
+      font-weight: 700;
+      font-size: 1.02rem;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .session-meta {
+      font-size: 0.88rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .session-hint {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .empty-cta {
+      display: inline-block;
+      margin-top: 1rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .empty-cta:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 720px) {
+      .page-shell {
+        width: min(100% - 1.15rem, var(--container));
+        padding-top: 0.8rem;
+      }
+
+      .site-header.study-site-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-bottom: 1.4rem;
+      }
+
+      .site-header-start {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .study-header-toolbar {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      .session-row {
+        padding: 1rem 0 1rem 1.1rem;
+      }
+
+      .session-delete {
+        width: 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header study-site-header">
+      <div class="site-header-start">
+        <a class="brand" href="/" aria-label="Bloom Study home">
+          <span class="bloom-logo" aria-hidden="true">
+            <span class="logo-book">
+              <span class="logo-page logo-page-left"></span>
+              <span class="logo-page logo-page-right"></span>
+              <span class="logo-spine"></span>
+            </span>
+            <span class="logo-petal logo-petal-left"></span>
+            <span class="logo-petal logo-petal-right"></span>
+            <span class="logo-drop"></span>
+          </span>
+          <span class="brand-name">
+            <strong>Bloom</strong>
+            <span>Study</span>
+          </span>
+        </a>
+        <a class="header-secondary-link" href="/upload.html">Upload PDF</a>
+      </div>
+      <div class="study-header-toolbar" role="toolbar" aria-label="Display">
+        <div class="study-menu-anchor">
+          <button type="button" class="study-tool-btn" id="btn-theme-menu" aria-expanded="false" aria-haspopup="true" aria-controls="popover-theme" title="Choose calm or warm colors for the whole page.">Theme</button>
+          <div class="study-popover" id="popover-theme" role="group" aria-label="Theme" hidden>
+            <p class="study-popover-lead">Color mood</p>
+            <button type="button" class="study-popover-option" id="theme-teal" aria-pressed="true">Calm (cool blues)</button>
+            <button type="button" class="study-popover-option" id="theme-warm" aria-pressed="false">Warm (soft paper)</button>
+          </div>
+        </div>
+        <div class="study-menu-anchor">
+          <button type="button" class="study-tool-btn" id="btn-text-menu" aria-expanded="false" aria-haspopup="true" aria-controls="popover-text" title="Change how large text appears on this page.">Text</button>
+          <div class="study-popover" id="popover-text" role="group" aria-label="Text size" hidden>
+            <p class="study-popover-lead">Reading size</p>
+            <button type="button" class="study-popover-option" id="text-1x" aria-pressed="true">Standard (1×)</button>
+            <button type="button" class="study-popover-option" id="text-2x" aria-pressed="false">Comfortable (2×)</button>
+            <button type="button" class="study-popover-option" id="text-3x" aria-pressed="false">Large (3×)</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div id="reading-scale-root" class="reading-scale-root">
+    <main class="sessions-main">
+      <header class="sessions-hero">
+        <p class="eyebrow">Your library</p>
+        <h1 id="sessions-heading">My sessions</h1>
+        <p class="subtitle" id="sessions-subtitle">Open a past lesson to pick up where you left off.</p>
+      </header>
+
+      <div class="sessions-list-wrap">
+        <p class="sessions-status" id="sessions-loading">Loading…</p>
+        <p class="sessions-status" id="sessions-error" hidden></p>
+        <ul class="sessions-list" id="sessions-list" hidden></ul>
+      </div>
+    </main>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var storageKey = "study-theme";
+      var textSizeStorageKey = "study-text-size";
+      var preferenceSyncReady = false;
+      var applyingServerPreferences = false;
+      var anonymousIdKey = "bloom-anonymous-id";
+      var deviceSecretKey = "bloom-device-secret";
+
+      function setTheme(name) {
+        root.setAttribute("data-theme", name);
+        document.getElementById("theme-teal").setAttribute("aria-pressed", name === "teal" ? "true" : "false");
+        document.getElementById("theme-warm").setAttribute("aria-pressed", name === "warm" ? "true" : "false");
+        try { localStorage.setItem(storageKey, name); } catch (e) {}
+        if (preferenceSyncReady && !applyingServerPreferences) {
+          savePreferences({ theme: name });
+        }
+      }
+
+      function setTextSize(size) {
+        if (size === "medium") size = "1x";
+        if (size === "large") size = "2x";
+        if (size === "xlarge") size = "3x";
+        if (size === "comfortable") size = "1x";
+        if (size !== "1x" && size !== "2x" && size !== "3x") size = "1x";
+        root.setAttribute("data-study-scale", size);
+        document.getElementById("text-1x").setAttribute("aria-pressed", size === "1x" ? "true" : "false");
+        document.getElementById("text-2x").setAttribute("aria-pressed", size === "2x" ? "true" : "false");
+        document.getElementById("text-3x").setAttribute("aria-pressed", size === "3x" ? "true" : "false");
+        try { localStorage.setItem(textSizeStorageKey, size); } catch (e) {}
+        if (preferenceSyncReady && !applyingServerPreferences) {
+          savePreferences({ textSize: size });
+        }
+      }
+
+      function savePreferences(partial) {
+        var body = {
+          theme: partial.theme || root.getAttribute("data-theme") || "teal",
+          textSize: partial.textSize || root.getAttribute("data-study-scale") || "1x",
+          preferredStudyLanding: "resume"
+        };
+        fetch("/me/preferences", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        }).catch(function () {});
+      }
+
+      function loadProfilePreferences() {
+        fetch("/me")
+          .then(function (res) {
+            if (res.status === 401) return null;
+            if (!res.ok) return null;
+            return res.json();
+          })
+          .then(function (profile) {
+            if (!profile || !profile.preferences) return;
+            applyingServerPreferences = true;
+            if (profile.preferences.theme) setTheme(profile.preferences.theme);
+            if (profile.preferences.textSize) setTextSize(profile.preferences.textSize);
+            applyingServerPreferences = false;
+          })
+          .finally(function () {
+            preferenceSyncReady = true;
+          });
+      }
+
+      var popoverTheme = document.getElementById("popover-theme");
+      var popoverText = document.getElementById("popover-text");
+      var btnThemeMenu = document.getElementById("btn-theme-menu");
+      var btnTextMenu = document.getElementById("btn-text-menu");
+
+      function closePopovers() {
+        popoverTheme.setAttribute("hidden", "");
+        popoverText.setAttribute("hidden", "");
+        btnThemeMenu.setAttribute("aria-expanded", "false");
+        btnTextMenu.setAttribute("aria-expanded", "false");
+      }
+
+      function togglePopover(which) {
+        if (which === "theme") {
+          var willOpen = popoverTheme.hasAttribute("hidden");
+          closePopovers();
+          if (willOpen) {
+            popoverTheme.removeAttribute("hidden");
+            btnThemeMenu.setAttribute("aria-expanded", "true");
+          }
+        } else if (which === "text") {
+          var willOpen2 = popoverText.hasAttribute("hidden");
+          closePopovers();
+          if (willOpen2) {
+            popoverText.removeAttribute("hidden");
+            btnTextMenu.setAttribute("aria-expanded", "true");
+          }
+        }
+      }
+
+      document.getElementById("btn-theme-menu").addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        togglePopover("theme");
+      });
+      document.getElementById("btn-text-menu").addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        togglePopover("text");
+      });
+
+      document.addEventListener("click", function (ev) {
+        var t = ev.target;
+        if (t && t.closest && t.closest(".study-header-toolbar")) return;
+        closePopovers();
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closePopovers();
+      });
+
+      document.getElementById("theme-teal").addEventListener("click", function () {
+        setTheme("teal");
+        closePopovers();
+      });
+      document.getElementById("theme-warm").addEventListener("click", function () {
+        setTheme("warm");
+        closePopovers();
+      });
+      document.getElementById("text-1x").addEventListener("click", function () {
+        setTextSize("1x");
+        closePopovers();
+      });
+      document.getElementById("text-2x").addEventListener("click", function () {
+        setTextSize("2x");
+        closePopovers();
+      });
+      document.getElementById("text-3x").addEventListener("click", function () {
+        setTextSize("3x");
+        closePopovers();
+      });
+
+      var saved = null;
+      try { saved = localStorage.getItem(storageKey); } catch (e) {}
+      if (saved === "warm" || saved === "teal") setTheme(saved);
+
+      var savedTextSize = null;
+      try { savedTextSize = localStorage.getItem(textSizeStorageKey); } catch (e) {}
+      setTextSize(savedTextSize || "1x");
+
+      loadProfilePreferences();
+
+      function randomToken(prefix) {
+        var bytes = new Uint8Array(32);
+        crypto.getRandomValues(bytes);
+        var binary = "";
+        for (var i = 0; i < bytes.length; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        var token = btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+        return prefix ? prefix + token : token;
+      }
+
+      function deviceIdentity() {
+        var anonymousId = null;
+        var deviceSecret = null;
+        try {
+          anonymousId = localStorage.getItem(anonymousIdKey);
+          deviceSecret = localStorage.getItem(deviceSecretKey);
+          if (!anonymousId || !deviceSecret) {
+            anonymousId = randomToken("anon_");
+            deviceSecret = randomToken("");
+            localStorage.setItem(anonymousIdKey, anonymousId);
+            localStorage.setItem(deviceSecretKey, deviceSecret);
+          }
+        } catch (e) {
+          anonymousId = randomToken("anon_");
+          deviceSecret = randomToken("");
+        }
+        return { anonymousId: anonymousId, deviceSecret: deviceSecret };
+      }
+
+      function authenticateDevice() {
+        var identity = deviceIdentity();
+        return fetch("/auth/device", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            anonymousId: identity.anonymousId,
+            deviceSecret: identity.deviceSecret
+          })
+        }).then(function (res) {
+          if (!res.ok) throw new Error("auth");
+          return res.json();
+        });
+      }
+
+      function formatWhen(iso) {
+        if (!iso) return "";
+        try {
+          var d = new Date(iso);
+          if (Number.isNaN(d.getTime())) return "";
+          return d.toLocaleString(undefined, {
+            dateStyle: "medium",
+            timeStyle: "short"
+          });
+        } catch (e) {
+          return "";
+        }
+      }
+
+      var loadingEl = document.getElementById("sessions-loading");
+      var errorEl = document.getElementById("sessions-error");
+      var listEl = document.getElementById("sessions-list");
+
+      function showError(msg) {
+        loadingEl.hidden = true;
+        listEl.hidden = true;
+        errorEl.innerHTML = "";
+        errorEl.textContent = msg;
+        errorEl.hidden = false;
+        errorEl.classList.add("is-error");
+      }
+
+      function renderSessions(sessions) {
+        loadingEl.hidden = true;
+        errorEl.hidden = true;
+        errorEl.classList.remove("is-error");
+        errorEl.textContent = "";
+        listEl.innerHTML = "";
+
+        if (!sessions || !sessions.length) {
+          listEl.hidden = true;
+          errorEl.classList.remove("is-error");
+          errorEl.innerHTML =
+            "No saved sessions yet." +
+            " <a class=\"empty-cta\" href=\"/upload.html\">Upload a PDF</a> to start.";
+          errorEl.hidden = false;
+          return;
+        }
+
+        for (var i = 0; i < sessions.length; i++) {
+          var s = sessions[i];
+          var sid = s.sessionId;
+          var name = s.originalFileName || "Study session";
+          var idx = Number(s.currentIndex);
+          if (Number.isNaN(idx)) idx = 0;
+          var sectionHuman = idx + 1;
+          var when = formatWhen(s.lastOpenedAt || s.createdAt);
+
+          var li = document.createElement("li");
+          li.className = "session-item";
+
+          var a = document.createElement("a");
+          a.className = "session-row";
+          a.href = "/study.html?session=" + encodeURIComponent(sid);
+          a.innerHTML =
+            "<span class=\"session-row-inner\">" +
+            "<span class=\"session-title\">" + escapeHtml(name) + "</span>" +
+            "<span class=\"session-meta\">Section " + sectionHuman + "</span>" +
+            "</span>" +
+            (when ? "<span class=\"session-hint\">Last opened · " + escapeHtml(when) + "</span>" : "");
+
+          var del = document.createElement("button");
+          del.type = "button";
+          del.className = "session-delete";
+          del.setAttribute("data-session-id", sid);
+          del.setAttribute("aria-label", "Delete session and uploaded file");
+          del.title = "Delete session";
+          del.innerHTML =
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">" +
+            "<path d=\"M3 6h18\"/><path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\"/>" +
+            "<path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\"/><line x1=\"10\" y1=\"11\" x2=\"10\" y2=\"17\"/><line x1=\"14\" y1=\"11\" x2=\"14\" y2=\"17\"/>" +
+            "</svg>";
+
+          li.appendChild(a);
+          li.appendChild(del);
+          listEl.appendChild(li);
+        }
+
+        listEl.hidden = false;
+      }
+
+      function deleteSessionRequest(sessionId, button) {
+        if (!window.confirm("Delete this session and its PDF from your library?")) return;
+        button.disabled = true;
+        function doDelete() {
+          return fetch("/me/sessions/" + encodeURIComponent(sessionId), { method: "DELETE", credentials: "same-origin" })
+            .then(function (res) {
+              if (res.status === 401) {
+                return authenticateDevice().then(function () {
+                  return fetch("/me/sessions/" + encodeURIComponent(sessionId), { method: "DELETE", credentials: "same-origin" });
+                });
+              }
+              return res;
+            })
+            .then(function (res) {
+              if (res.status === 401) {
+                window.location.href = "/";
+                return;
+              }
+              if (res.status === 404) {
+                loadSessions();
+                return;
+              }
+              if (!res.ok) throw new Error("delete");
+              errorEl.hidden = true;
+              errorEl.classList.remove("is-error");
+              errorEl.textContent = "";
+              var item = button.closest(".session-item");
+              if (item) item.remove();
+              if (!listEl.querySelector(".session-item")) {
+                loadSessions();
+              }
+            })
+            .catch(function () {
+              button.disabled = false;
+              errorEl.textContent = "Could not delete that session. Try again.";
+              errorEl.classList.add("is-error");
+              errorEl.hidden = false;
+              listEl.hidden = false;
+            });
+        }
+        doDelete();
+      }
+
+      listEl.addEventListener("click", function (ev) {
+        var btn = ev.target.closest(".session-delete");
+        if (!btn || !listEl.contains(btn)) return;
+        ev.preventDefault();
+        ev.stopPropagation();
+        var sid = btn.getAttribute("data-session-id");
+        if (sid) deleteSessionRequest(sid, btn);
+      });
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function loadSessions() {
+        return fetch("/me/sessions")
+          .then(function (res) {
+            if (res.status === 401) {
+              return authenticateDevice().then(function () {
+                return fetch("/me/sessions");
+              });
+            }
+            return res;
+          })
+          .then(function (res) {
+            if (res.status === 401) {
+              window.location.href = "/";
+              return null;
+            }
+            if (!res.ok) throw new Error("Could not load sessions.");
+            return res.json();
+          })
+          .then(function (data) {
+            if (data === null) return;
+            renderSessions(data);
+          })
+          .catch(function () {
+            showError("Something went wrong loading your sessions. Try again in a moment.");
+          });
+      }
+
+      loadSessions();
+    })();
+  </script>
+</body>
+</html>

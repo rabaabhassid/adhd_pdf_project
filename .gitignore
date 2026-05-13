@@ -1,0 +1,23 @@
+# --- Secrets & local overrides (never commit) ---
+.env
+.env.*
+!.env.example
+
+**/application-local.properties
+
+# --- Backend: Maven, uploads, local H2 ---
+backend/target/
+backend/uploads/
+backend/data/
+*.mv.db
+*.trace.db
+
+# --- OS, editors, Office lock files ---
+.DS_Store
+Thumbs.db
+~$*
+.idea/
+*.iml
+.vscode/
+*.swp
+*~

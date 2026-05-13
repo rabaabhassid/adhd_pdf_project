@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="teal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upload PDF - Bloom Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font: "Open Sans", Verdana, "Segoe UI", system-ui, sans-serif;
+      --radius: 22px;
+      --radius-btn: 14px;
+      --radius-inner: 16px;
+      --container: 1280px;
+      --transition: 180ms ease;
+      --layout-duration: 0.48s;
+      --layout-ease: cubic-bezier(0.33, 0.86, 0.24, 1);
+    }
+
+    html[data-theme="teal"] {
+      --bg: #E3F2F9;
+      --text: #1D3557;
+      --accent: #457B9D;
+      --accent-text: #F1FAEE;
+      --drop-border: #457B9D;
+      --muted: rgba(29, 53, 87, 0.72);
+      --focus-ring: #1D3557;
+      --surface: rgba(255, 255, 255, 0.66);
+      --surface-strong: rgba(255, 255, 255, 0.88);
+      --border-soft: rgba(69, 123, 157, 0.22);
+      --shadow-soft: 0 24px 70px rgba(29, 53, 87, 0.12);
+      --logo-ink: #142e57;
+      --logo-page: #3f79a8;
+      --logo-petal: #d8e9fa;
+      --logo-drop: #c7ddf4;
+    }
+
+    html[data-theme="warm"] {
+      --bg: #F5E9E2;
+      --text: #3E3923;
+      --accent: #7DB794;
+      --accent-text: #213625;
+      --drop-border: #8BC4A0;
+      --muted: rgba(62, 57, 35, 0.75);
+      --focus-ring: #3E3923;
+      --surface: rgba(255, 252, 247, 0.68);
+      --surface-strong: rgba(255, 252, 247, 0.9);
+      --border-soft: rgba(125, 183, 148, 0.3);
+      --shadow-soft: 0 24px 70px rgba(62, 57, 35, 0.11);
+      --logo-ink: #3e3923;
+      --logo-page: #7db794;
+      --logo-petal: #ead8c9;
+      --logo-drop: #d9c3a5;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.6;
+      letter-spacing: 0.015em;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.78), transparent 32rem),
+        radial-gradient(circle at 82% 18%, color-mix(in srgb, var(--accent), transparent 76%), transparent 24rem),
+        linear-gradient(135deg, var(--bg), rgba(255, 255, 255, 0.32));
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-shell {
+      width: min(100% - 2rem, var(--container));
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 1.35rem 0 3rem;
+    }
+
+    .site-header.study-site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding: 0.35rem 0 1.75rem;
+    }
+
+    .site-header-start {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.85rem 1.25rem;
+      min-width: 0;
+    }
+
+    .header-secondary-link {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-decoration: none;
+      white-space: nowrap;
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: color var(--transition), background var(--transition), border-color var(--transition);
+    }
+
+    .header-secondary-link:hover {
+      color: var(--text);
+      background: var(--surface);
+      border-color: var(--border-soft);
+    }
+
+    .header-secondary-link:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .bloom-logo {
+      position: relative;
+      width: 3.25rem;
+      height: 2.8rem;
+      flex: 0 0 auto;
+    }
+
+    .logo-book,
+    .logo-page,
+    .logo-petal,
+    .logo-drop,
+    .logo-spine {
+      position: absolute;
+    }
+
+    .logo-book {
+      top: 0.1rem;
+      left: 50%;
+      width: 2.55rem;
+      height: 1.65rem;
+      transform: translateX(-50%);
+      filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.1));
+    }
+
+    .logo-page {
+      top: 0;
+      width: 1.17rem;
+      height: 1.58rem;
+      transform-origin: bottom center;
+    }
+
+    .logo-page-left {
+      left: 0.05rem;
+      background: var(--logo-ink);
+      border-radius: 0.08rem 0.72rem 0.18rem 0.08rem;
+      transform: skewY(8deg);
+    }
+
+    .logo-page-right {
+      right: 0.05rem;
+      background: var(--logo-page);
+      border-radius: 0.72rem 0.08rem 0.08rem 0.18rem;
+      transform: skewY(-8deg);
+    }
+
+    .logo-spine {
+      left: 50%;
+      bottom: 0.08rem;
+      width: 0.16rem;
+      height: 1.38rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.88);
+      transform: translateX(-50%);
+    }
+
+    .logo-petal {
+      bottom: 0.42rem;
+      width: 1.16rem;
+      height: 0.72rem;
+      background: var(--logo-petal);
+      opacity: 0.95;
+    }
+
+    .logo-petal-left {
+      left: 0.06rem;
+      border-radius: 999px 999px 0 999px;
+      transform: rotate(10deg);
+    }
+
+    .logo-petal-right {
+      right: 0.06rem;
+      border-radius: 999px 999px 999px 0;
+      transform: rotate(-10deg);
+    }
+
+    .logo-drop {
+      left: 50%;
+      bottom: 0;
+      width: 0.86rem;
+      height: 0.78rem;
+      border-radius: 0 0 999px 999px;
+      background: var(--logo-drop);
+      transform: translateX(-50%);
+    }
+
+    .brand-name {
+      display: grid;
+      line-height: 1.05;
+    }
+
+    .brand-name strong {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--logo-ink);
+    }
+
+    .brand-name span {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--logo-page);
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+    }
+
+    .study-header-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.45rem;
+    }
+
+    .study-menu-anchor {
+      position: relative;
+    }
+
+    .study-tool-btn {
+      font-family: var(--font);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.48rem 0.78rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+      white-space: nowrap;
+    }
+
+    .study-tool-btn:hover {
+      background: var(--surface-strong);
+      border-color: color-mix(in srgb, var(--accent), transparent 40%);
+    }
+
+    .study-tool-btn[aria-expanded="true"] {
+      background: rgba(255, 255, 255, 0.88);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent), transparent 55%);
+    }
+
+    .study-tool-btn:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .study-popover {
+      position: absolute;
+      top: calc(100% + 0.35rem);
+      right: 0;
+      z-index: 40;
+      min-width: 12.5rem;
+      padding: 0.55rem 0.5rem;
+      border-radius: var(--radius-inner);
+      border: 1px solid var(--border-soft);
+      background: var(--surface-strong);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(12px);
+    }
+
+    .study-popover-lead {
+      margin: 0 0.35rem 0.45rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .study-popover-option {
+      display: block;
+      width: 100%;
+      font-family: var(--font);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-align: left;
+      padding: 0.5rem 0.55rem;
+      margin: 0.12rem 0;
+      border-radius: 10px;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    .study-popover-option:hover {
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .study-popover-option[aria-pressed="true"] {
+      background: var(--accent);
+      color: var(--accent-text);
+    }
+
+    .study-popover-option:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 1px;
+    }
+
+    .reading-scale-root {
+      font-size: 0.8125rem;
+      line-height: 1.62;
+      transition: font-size var(--layout-duration) var(--layout-ease);
+    }
+
+    html[data-study-scale="2x"] .reading-scale-root {
+      font-size: 1.0625rem;
+      line-height: 1.64;
+    }
+
+    html[data-study-scale="3x"] .reading-scale-root {
+      font-size: 1.375rem;
+      line-height: 1.66;
+    }
+
+    .upload-main {
+      display: grid;
+      gap: 1.35rem;
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .upload-hero {
+      padding-top: clamp(0.75rem, 3vw, 2rem);
+    }
+
+    .eyebrow {
+      margin: 0 0 0.65rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.55rem, 7vw, 5rem);
+      line-height: 1;
+      letter-spacing: -0.075em;
+    }
+
+    .subtitle {
+      margin: 1rem auto 0;
+      max-width: 38rem;
+      color: var(--muted);
+      font-size: clamp(1.02rem, 2vw, 1.18rem);
+    }
+
+    .upload-card {
+      width: 100%;
+      padding: clamp(1.25rem, 4vw, 1.8rem);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      background: var(--surface-strong);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(12px);
+    }
+
+    .drop-zone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 13rem;
+      border: 2px dashed var(--drop-border);
+      border-radius: calc(var(--radius) - 5px);
+      padding: 2.4rem 1.4rem;
+      background: rgba(255, 255, 255, 0.45);
+      cursor: pointer;
+      transition: border-color var(--transition), background var(--transition), transform var(--transition);
+    }
+
+    .drop-zone:hover,
+    .drop-zone:focus-within,
+    .drop-zone.dragover {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.75);
+      transform: translateY(-1px);
+    }
+
+    .drop-zone.dragover {
+      border-style: solid;
+    }
+
+    .drop-zone p {
+      margin: 0;
+      color: var(--text);
+    }
+
+    .drop-zone strong {
+      font-size: 1.12rem;
+    }
+
+    .drop-zone .hint {
+      margin-top: 0.45rem;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .file-name {
+      margin-top: 0.95rem;
+      font-size: 0.95rem;
+      color: var(--muted);
+      word-break: break-word;
+    }
+
+    .primary-btn {
+      width: 100%;
+      min-height: 3.25rem;
+      margin-top: 1.25rem;
+      padding: 0.92rem 1.25rem;
+      border: none;
+      border-radius: var(--radius-btn);
+      background: color-mix(in srgb, var(--accent), white 10%);
+      color: var(--accent-text);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      opacity: 0.72;
+      transition: filter var(--transition), transform var(--transition), opacity var(--transition), box-shadow var(--transition);
+    }
+
+    .primary-btn.is-ready {
+      opacity: 1;
+      filter: brightness(1.08);
+      box-shadow: 0 18px 38px color-mix(in srgb, var(--accent), transparent 62%);
+    }
+
+    .primary-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    .primary-btn:disabled {
+      cursor: wait;
+      transform: none;
+    }
+
+    .analysis-note {
+      margin: 0.9rem 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .status {
+      display: none;
+      padding: 1rem;
+      border-radius: 14px;
+      text-align: left;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid var(--border-soft);
+      color: var(--muted);
+    }
+
+    .status.visible { display: block; }
+    .status.error { border-color: rgba(168, 90, 90, 0.35); color: var(--text); }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .study-popover-option:focus-visible,
+    .primary-btn:focus-visible,
+    .drop-zone:focus-within {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 720px) {
+      .page-shell {
+        width: min(100% - 1.15rem, var(--container));
+        padding-top: 0.8rem;
+      }
+
+      .site-header.study-site-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-bottom: 1.4rem;
+      }
+
+      .site-header-start {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .study-header-toolbar {
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header study-site-header">
+      <div class="site-header-start">
+        <a class="brand" href="/" aria-label="Bloom Study home">
+          <span class="bloom-logo" aria-hidden="true">
+            <span class="logo-book">
+              <span class="logo-page logo-page-left"></span>
+              <span class="logo-page logo-page-right"></span>
+              <span class="logo-spine"></span>
+            </span>
+            <span class="logo-petal logo-petal-left"></span>
+            <span class="logo-petal logo-petal-right"></span>
+            <span class="logo-drop"></span>
+          </span>
+          <span class="brand-name">
+            <strong>Bloom</strong>
+            <span>Study</span>
+          </span>
+        </a>
+        <a class="header-secondary-link" href="/sessions.html">My sessions</a>
+      </div>
+      <div class="study-header-toolbar" role="toolbar" aria-label="Display">
+        <div class="study-menu-anchor">
+          <button type="button" class="study-tool-btn" id="btn-theme-menu" aria-expanded="false" aria-haspopup="true" aria-controls="popover-theme" title="Choose calm or warm colors for the whole page.">Theme</button>
+          <div class="study-popover" id="popover-theme" role="group" aria-label="Theme" hidden>
+            <p class="study-popover-lead">Color mood</p>
+            <button type="button" class="study-popover-option" id="theme-teal" aria-pressed="true">Calm (cool blues)</button>
+            <button type="button" class="study-popover-option" id="theme-warm" aria-pressed="false">Warm (soft paper)</button>
+          </div>
+        </div>
+        <div class="study-menu-anchor">
+          <button type="button" class="study-tool-btn" id="btn-text-menu" aria-expanded="false" aria-haspopup="true" aria-controls="popover-text" title="Change how large text appears on this page.">Text</button>
+          <div class="study-popover" id="popover-text" role="group" aria-label="Text size" hidden>
+            <p class="study-popover-lead">Reading size</p>
+            <button type="button" class="study-popover-option" id="text-1x" aria-pressed="true">Standard (1×)</button>
+            <button type="button" class="study-popover-option" id="text-2x" aria-pressed="false">Comfortable (2×)</button>
+            <button type="button" class="study-popover-option" id="text-3x" aria-pressed="false">Large (3×)</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div id="reading-scale-root" class="reading-scale-root">
+    <main class="upload-main">
+      <section class="upload-hero" aria-labelledby="upload-title">
+        <p class="eyebrow">Ready to study</p>
+        <h1 id="user-greeting">Hi</h1>
+        <p class="subtitle" id="upload-title">Upload a PDF to begin your study session</p>
+      </section>
+
+      <section class="upload-card" aria-label="PDF upload">
+        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+          <label class="drop-zone" id="drop-zone" for="file-input">
+            <p><strong>Choose your PDF lesson</strong></p>
+            <p class="hint">Drag and drop, or click to select</p>
+            <input class="sr-only" id="file-input" name="file" type="file" accept=".pdf,application/pdf" required>
+          </label>
+          <div class="file-name" id="file-name" aria-live="polite"></div>
+          <button type="submit" class="primary-btn" id="submit-btn">Select a PDF first</button>
+        </form>
+      </section>
+
+      <p class="analysis-note">Your PDF will be analyzed to create personalized study sessions</p>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+    </main>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var storageKey = "study-theme";
+      var textSizeStorageKey = "study-text-size";
+      var preferenceSyncReady = false;
+      var applyingServerPreferences = false;
+      var anonymousIdKey = "bloom-anonymous-id";
+      var deviceSecretKey = "bloom-device-secret";
+
+      function setTheme(name) {
+        root.setAttribute("data-theme", name);
+        document.getElementById("theme-teal").setAttribute("aria-pressed", name === "teal" ? "true" : "false");
+        document.getElementById("theme-warm").setAttribute("aria-pressed", name === "warm" ? "true" : "false");
+        try { localStorage.setItem(storageKey, name); } catch (e) {}
+        if (preferenceSyncReady && !applyingServerPreferences) {
+          savePreferences({ theme: name });
+        }
+      }
+
+      function setTextSize(size) {
+        if (size === "medium") size = "1x";
+        if (size === "large") size = "2x";
+        if (size === "xlarge") size = "3x";
+        if (size === "comfortable") size = "1x";
+        if (size !== "1x" && size !== "2x" && size !== "3x") size = "1x";
+        root.setAttribute("data-study-scale", size);
+        document.getElementById("text-1x").setAttribute("aria-pressed", size === "1x" ? "true" : "false");
+        document.getElementById("text-2x").setAttribute("aria-pressed", size === "2x" ? "true" : "false");
+        document.getElementById("text-3x").setAttribute("aria-pressed", size === "3x" ? "true" : "false");
+        try { localStorage.setItem(textSizeStorageKey, size); } catch (e) {}
+        if (preferenceSyncReady && !applyingServerPreferences) {
+          savePreferences({ textSize: size });
+        }
+      }
+
+      function savePreferences(partial) {
+        var body = {
+          theme: partial.theme || root.getAttribute("data-theme") || "teal",
+          textSize: partial.textSize || root.getAttribute("data-study-scale") || "1x",
+          preferredStudyLanding: "resume"
+        };
+        fetch("/me/preferences", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        }).catch(function () {});
+      }
+
+      function loadProfilePreferences() {
+        fetch("/me")
+          .then(function (res) {
+            if (res.status === 401) return null;
+            if (!res.ok) return null;
+            return res.json();
+          })
+          .then(function (profile) {
+            if (!profile || !profile.preferences) return;
+            applyingServerPreferences = true;
+            if (profile.preferences.theme) setTheme(profile.preferences.theme);
+            if (profile.preferences.textSize) setTextSize(profile.preferences.textSize);
+            applyingServerPreferences = false;
+          })
+          .finally(function () {
+            preferenceSyncReady = true;
+          });
+      }
+
+      var popoverTheme = document.getElementById("popover-theme");
+      var popoverText = document.getElementById("popover-text");
+      var btnThemeMenu = document.getElementById("btn-theme-menu");
+      var btnTextMenu = document.getElementById("btn-text-menu");
+
+      function closePopovers() {
+        popoverTheme.setAttribute("hidden", "");
+        popoverText.setAttribute("hidden", "");
+        btnThemeMenu.setAttribute("aria-expanded", "false");
+        btnTextMenu.setAttribute("aria-expanded", "false");
+      }
+
+      function togglePopover(which) {
+        if (which === "theme") {
+          var willOpen = popoverTheme.hasAttribute("hidden");
+          closePopovers();
+          if (willOpen) {
+            popoverTheme.removeAttribute("hidden");
+            btnThemeMenu.setAttribute("aria-expanded", "true");
+          }
+        } else if (which === "text") {
+          var willOpen2 = popoverText.hasAttribute("hidden");
+          closePopovers();
+          if (willOpen2) {
+            popoverText.removeAttribute("hidden");
+            btnTextMenu.setAttribute("aria-expanded", "true");
+          }
+        }
+      }
+
+      document.getElementById("btn-theme-menu").addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        togglePopover("theme");
+      });
+      document.getElementById("btn-text-menu").addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        togglePopover("text");
+      });
+
+      document.addEventListener("click", function (ev) {
+        var t = ev.target;
+        if (t && t.closest && t.closest(".study-header-toolbar")) return;
+        closePopovers();
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closePopovers();
+      });
+
+      document.getElementById("theme-teal").addEventListener("click", function () {
+        setTheme("teal");
+        closePopovers();
+      });
+      document.getElementById("theme-warm").addEventListener("click", function () {
+        setTheme("warm");
+        closePopovers();
+      });
+      document.getElementById("text-1x").addEventListener("click", function () {
+        setTextSize("1x");
+        closePopovers();
+      });
+      document.getElementById("text-2x").addEventListener("click", function () {
+        setTextSize("2x");
+        closePopovers();
+      });
+      document.getElementById("text-3x").addEventListener("click", function () {
+        setTextSize("3x");
+        closePopovers();
+      });
+
+      var saved = null;
+      try { saved = localStorage.getItem(storageKey); } catch (e) {}
+      if (saved === "warm" || saved === "teal") setTheme(saved);
+
+      var savedTextSize = null;
+      try { savedTextSize = localStorage.getItem(textSizeStorageKey); } catch (e) {}
+      setTextSize(savedTextSize || "1x");
+
+      loadProfilePreferences();
+
+      var greeting = document.getElementById("user-greeting");
+      var form = document.getElementById("upload-form");
+      var input = document.getElementById("file-input");
+      var dropZone = document.getElementById("drop-zone");
+      var fileName = document.getElementById("file-name");
+      var submitBtn = document.getElementById("submit-btn");
+      var status = document.getElementById("status");
+      var dotTimer = null;
+
+      function firstName(profile) {
+        var name = profile && profile.displayName ? profile.displayName.trim() : "";
+        if (!name) return "";
+        return name.split(/\s+/)[0];
+      }
+
+      function randomToken(prefix) {
+        var bytes = new Uint8Array(32);
+        crypto.getRandomValues(bytes);
+        var binary = "";
+        for (var i = 0; i < bytes.length; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        var token = btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+        return prefix ? prefix + token : token;
+      }
+
+      function deviceIdentity() {
+        var anonymousId = null;
+        var deviceSecret = null;
+        try {
+          anonymousId = localStorage.getItem(anonymousIdKey);
+          deviceSecret = localStorage.getItem(deviceSecretKey);
+          if (!anonymousId || !deviceSecret) {
+            anonymousId = randomToken("anon_");
+            deviceSecret = randomToken("");
+            localStorage.setItem(anonymousIdKey, anonymousId);
+            localStorage.setItem(deviceSecretKey, deviceSecret);
+          }
+        } catch (e) {
+          anonymousId = randomToken("anon_");
+          deviceSecret = randomToken("");
+        }
+        return { anonymousId: anonymousId, deviceSecret: deviceSecret };
+      }
+
+      function authenticateDevice() {
+        var identity = deviceIdentity();
+        return fetch("/auth/device", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            anonymousId: identity.anonymousId,
+            deviceSecret: identity.deviceSecret
+          })
+        }).then(function (res) {
+          if (!res.ok) throw new Error("Could not restore this device profile.");
+          return res.json();
+        });
+      }
+
+      function applyProfile(profile) {
+        if (!profile || !profile.displayName) {
+          window.location.href = "/";
+          return;
+        }
+        var given = firstName(profile);
+        greeting.textContent = given ? "Hi, " + given : "Hi";
+      }
+
+      function loadProfile() {
+        fetch("/me")
+          .then(function (res) {
+            if (res.status === 401) {
+              return authenticateDevice().then(function (payload) {
+                return payload.user;
+              });
+            }
+            if (!res.ok) throw new Error("Could not load profile.");
+            return res.json();
+          })
+          .then(function (profile) {
+            applyProfile(profile);
+          })
+          .catch(function () {
+            window.location.href = "/";
+          });
+      }
+
+      function selectedPdf() {
+        return input.files && input.files[0];
+      }
+
+      function updateSelectedState() {
+        var file = selectedPdf();
+        if (file) {
+          fileName.textContent = "Selected: " + file.name;
+          submitBtn.textContent = "Start study-session";
+          submitBtn.classList.add("is-ready");
+        } else {
+          fileName.textContent = "";
+          submitBtn.textContent = "Select a PDF first";
+          submitBtn.classList.remove("is-ready");
+        }
+      }
+
+      function startGeneratingLabel() {
+        var dots = 1;
+        submitBtn.textContent = "Generating summaries.";
+        dotTimer = window.setInterval(function () {
+          dots = dots >= 3 ? 1 : dots + 1;
+          submitBtn.textContent = "Generating summaries" + ".".repeat(dots);
+        }, 420);
+      }
+
+      function stopGeneratingLabel() {
+        if (dotTimer) {
+          window.clearInterval(dotTimer);
+          dotTimer = null;
+        }
+      }
+
+      input.addEventListener("change", updateSelectedState);
+
+      dropZone.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        dropZone.classList.add("dragover");
+      });
+
+      dropZone.addEventListener("dragleave", function () {
+        dropZone.classList.remove("dragover");
+      });
+
+      dropZone.addEventListener("drop", function (e) {
+        e.preventDefault();
+        dropZone.classList.remove("dragover");
+        var file = e.dataTransfer.files && e.dataTransfer.files[0];
+        if (file && (file.type === "application/pdf" || /\.pdf$/i.test(file.name || ""))) {
+          var dt = new DataTransfer();
+          dt.items.add(file);
+          input.files = dt.files;
+          updateSelectedState();
+        }
+      });
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        status.classList.remove("visible", "error");
+        status.textContent = "";
+
+        var file = selectedPdf();
+        if (!file) {
+          updateSelectedState();
+          return;
+        }
+
+        var fd = new FormData();
+        fd.append("file", file);
+
+        submitBtn.disabled = true;
+        submitBtn.classList.add("is-ready");
+        startGeneratingLabel();
+
+        fetch("/upload", { method: "POST", body: fd })
+          .then(function (res) {
+            if (res.status === 401) {
+              window.location.href = "/";
+              return null;
+            }
+            if (!res.ok) throw new Error(res.status === 400 ? "Upload was not accepted." : "Something went wrong.");
+            return res.json();
+          })
+          .then(function (data) {
+            if (!data) return;
+            if (data.sessionId) {
+              window.location.href = "/study.html?session=" + encodeURIComponent(data.sessionId);
+              return;
+            }
+            throw new Error("No study session was created. Check that the PDF has readable text.");
+          })
+          .catch(function (err) {
+            status.classList.add("visible", "error");
+            status.textContent = err.message || "Upload failed. Please try again.";
+            submitBtn.disabled = false;
+            stopGeneratingLabel();
+            updateSelectedState();
+          });
+      });
+
+      loadProfile();
+      updateSelectedState();
+    })();
+  </script>
+</body>
+</html>

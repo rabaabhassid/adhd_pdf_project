@@ -1,0 +1,2285 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="teal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Study session · Bloom Study</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+  <style>
+    :root {
+      --font: "Open Sans", Verdana, "Segoe UI", system-ui, sans-serif;
+      --radius: 22px;
+      --radius-btn: 14px;
+      --radius-inner: 16px;
+      --container: 1280px;
+      --transition: 180ms ease;
+      --layout-duration: 0.48s;
+      --layout-ease: cubic-bezier(0.33, 0.86, 0.24, 1);
+    }
+
+    html[data-theme="teal"] {
+      --bg: #E3F2F9;
+      --text: #1D3557;
+      --accent: #457B9D;
+      --accent-text: #F1FAEE;
+      --drop-border: #457B9D;
+      --muted: rgba(29, 53, 87, 0.72);
+      --focus-ring: #1D3557;
+      --surface: rgba(255, 255, 255, 0.66);
+      --surface-strong: rgba(255, 255, 255, 0.88);
+      --border-soft: rgba(69, 123, 157, 0.22);
+      --shadow-soft: 0 24px 70px rgba(29, 53, 87, 0.12);
+      --logo-ink: #142e57;
+      --logo-page: #3f79a8;
+      --logo-petal: #d8e9fa;
+      --logo-drop: #c7ddf4;
+    }
+
+    html[data-theme="warm"] {
+      --bg: #F5E9E2;
+      --text: #3E3923;
+      --accent: #7DB794;
+      --accent-text: #213625;
+      --drop-border: #8BC4A0;
+      --muted: rgba(62, 57, 35, 0.75);
+      --focus-ring: #3E3923;
+      --surface: rgba(255, 252, 247, 0.68);
+      --surface-strong: rgba(255, 252, 247, 0.9);
+      --border-soft: rgba(125, 183, 148, 0.3);
+      --shadow-soft: 0 24px 70px rgba(62, 57, 35, 0.11);
+      --logo-ink: #3e3923;
+      --logo-page: #7db794;
+      --logo-petal: #ead8c9;
+      --logo-drop: #d9c3a5;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    /* Reading scale: only #main-panel (summary + quiz) resizes; chrome stays calm. */
+    html {
+      font-size: 100%;
+    }
+
+    :root {
+      --read-width: min(92vw, 860px);
+      --content-measure: 68ch;
+    }
+
+    html[data-study-scale="2x"] {
+      --read-width: min(93vw, 900px);
+    }
+
+    html[data-study-scale="3x"] {
+      --read-width: min(96vw, 980px);
+      --content-measure: 74ch;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.6;
+      letter-spacing: 0.015em;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.78), transparent 32rem),
+        radial-gradient(circle at 82% 18%, color-mix(in srgb, var(--accent), transparent 76%), transparent 24rem),
+        linear-gradient(135deg, var(--bg), rgba(255, 255, 255, 0.32));
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-shell.study-page-shell {
+      width: min(100% - 2rem, var(--container));
+      margin: 0 auto;
+      padding: 1.35rem 0 6.5rem;
+    }
+
+    .study-site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding: 0.35rem 0 1.75rem;
+    }
+
+    .study-header-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.85rem 1.25rem;
+      min-width: 0;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .bloom-logo {
+      position: relative;
+      width: 3.25rem;
+      height: 2.8rem;
+      flex: 0 0 auto;
+    }
+
+    .logo-book,
+    .logo-page,
+    .logo-petal,
+    .logo-drop,
+    .logo-spine {
+      position: absolute;
+    }
+
+    .logo-book {
+      top: 0.1rem;
+      left: 50%;
+      width: 2.55rem;
+      height: 1.65rem;
+      transform: translateX(-50%);
+      filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.1));
+    }
+
+    .logo-page {
+      top: 0;
+      width: 1.17rem;
+      height: 1.58rem;
+      transform-origin: bottom center;
+    }
+
+    .logo-page-left {
+      left: 0.05rem;
+      background: var(--logo-ink);
+      border-radius: 0.08rem 0.72rem 0.18rem 0.08rem;
+      transform: skewY(8deg);
+    }
+
+    .logo-page-right {
+      right: 0.05rem;
+      background: var(--logo-page);
+      border-radius: 0.72rem 0.08rem 0.08rem 0.18rem;
+      transform: skewY(-8deg);
+    }
+
+    .logo-spine {
+      left: 50%;
+      bottom: 0.08rem;
+      width: 0.16rem;
+      height: 1.38rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.88);
+      transform: translateX(-50%);
+    }
+
+    .logo-petal {
+      bottom: 0.42rem;
+      width: 1.16rem;
+      height: 0.72rem;
+      background: var(--logo-petal);
+      opacity: 0.95;
+    }
+
+    .logo-petal-left {
+      left: 0.06rem;
+      border-radius: 999px 999px 0 999px;
+      transform: rotate(10deg);
+    }
+
+    .logo-petal-right {
+      right: 0.06rem;
+      border-radius: 999px 999px 999px 0;
+      transform: rotate(-10deg);
+    }
+
+    .logo-drop {
+      left: 50%;
+      bottom: 0;
+      width: 0.86rem;
+      height: 0.78rem;
+      border-radius: 0 0 999px 999px;
+      background: var(--logo-drop);
+      transform: translateX(-50%);
+    }
+
+    .brand-name {
+      display: grid;
+      line-height: 1.05;
+    }
+
+    .brand-name strong {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--logo-ink);
+    }
+
+    .brand-name span {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--logo-page);
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+    }
+
+    .study-back-home {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-decoration: none;
+      white-space: nowrap;
+      padding: 0.35rem 0.5rem;
+      border-radius: 999px;
+      transition: color var(--transition), background var(--transition);
+    }
+
+    .study-back-home:hover {
+      color: var(--text);
+      background: var(--surface);
+    }
+
+    .study-back-home:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .study-header-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.45rem;
+    }
+
+    .study-menu-anchor {
+      position: relative;
+    }
+
+    .study-tool-btn {
+      font-family: var(--font);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.48rem 0.78rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+      white-space: nowrap;
+    }
+
+    .study-tool-btn:hover {
+      background: var(--surface-strong);
+      border-color: color-mix(in srgb, var(--accent), transparent 40%);
+    }
+
+    .study-tool-btn[aria-expanded="true"] {
+      background: rgba(255, 255, 255, 0.88);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent), transparent 55%);
+    }
+
+    .study-tool-btn:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .study-tool-btn--focus {
+      color: var(--accent);
+      border-color: color-mix(in srgb, var(--accent), transparent 25%);
+    }
+
+    .study-popover {
+      position: absolute;
+      top: calc(100% + 0.35rem);
+      right: 0;
+      z-index: 40;
+      min-width: 12.5rem;
+      padding: 0.55rem 0.5rem;
+      border-radius: var(--radius-inner);
+      border: 1px solid var(--border-soft);
+      background: var(--surface-strong);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(12px);
+    }
+
+    .study-popover-lead {
+      margin: 0 0.35rem 0.45rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .study-popover-option {
+      display: block;
+      width: 100%;
+      font-family: var(--font);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-align: left;
+      padding: 0.5rem 0.55rem;
+      margin: 0.12rem 0;
+      border-radius: 10px;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    .study-popover-option:hover {
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .study-popover-option[aria-pressed="true"] {
+      background: var(--accent);
+      color: var(--accent-text);
+    }
+
+    .study-popover-option:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 1px;
+    }
+
+    .study-focus-exit {
+      position: fixed;
+      top: 0.85rem;
+      right: 0.85rem;
+      z-index: 300;
+      font-family: var(--font);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.5rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: var(--surface-strong);
+      color: var(--text);
+      cursor: pointer;
+      box-shadow: var(--shadow-soft);
+      transition: background var(--transition), transform var(--transition);
+    }
+
+    .study-focus-exit:hover {
+      background: var(--surface);
+      transform: translateY(-1px);
+    }
+
+    .study-focus-exit:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 3px;
+    }
+
+    html[data-focus-mode="true"] .study-site-header,
+    html[data-focus-mode="true"] #study-roadmap,
+    html[data-focus-mode="true"] .study-focus-header,
+    html[data-focus-mode="true"] .nav-bar {
+      display: none !important;
+    }
+
+    html[data-focus-mode="true"] .page-shell.study-page-shell {
+      width: min(100% - 1.25rem, var(--container));
+      padding: 1rem 0 2.5rem;
+    }
+
+    html[data-focus-mode="true"] .study-layout {
+      display: block;
+      max-width: none;
+    }
+
+    html[data-focus-mode="true"] .study-inner {
+      max-width: min(100%, calc(var(--read-width) + 2rem));
+      margin: 0 auto;
+    }
+
+    .study-workspace {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .study-layout {
+      width: 100%;
+      max-width: calc(var(--read-width) + 17rem);
+      display: grid;
+      grid-template-columns: minmax(12.5rem, 15.5rem) minmax(0, var(--read-width));
+      align-items: start;
+      gap: 1.5rem;
+      transition: max-width var(--layout-duration) var(--layout-ease);
+    }
+
+    .study-roadmap {
+      position: sticky;
+      top: 1rem;
+      width: 100%;
+      padding: 1.15rem 1.2rem 1.25rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-soft);
+      background: var(--surface-strong);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(12px);
+      color: var(--text);
+    }
+
+    html[data-theme="warm"] .study-roadmap {
+      border-color: var(--border-soft);
+      background: var(--surface-strong);
+    }
+
+    .roadmap-eyebrow {
+      margin: 0 0 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .roadmap-title {
+      margin: 0;
+      font-size: 0.98rem;
+      font-weight: 700;
+      line-height: 1.35;
+      word-break: break-word;
+      color: var(--text);
+    }
+
+    .roadmap-progress {
+      margin-top: 0.9rem;
+    }
+
+    .roadmap-progress-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.65rem;
+      margin-bottom: 0.45rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .roadmap-progress-row strong {
+      color: var(--text);
+      font-size: 0.72rem;
+      white-space: nowrap;
+    }
+
+    .roadmap-track {
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+
+    .roadmap-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: var(--accent);
+      transition: width var(--transition);
+    }
+
+    .roadmap-steps-header h3 {
+      margin: 1.1rem 0 0.6rem;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .roadmap-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-height: calc(100vh - 18rem);
+      overflow-y: auto;
+      padding-right: 0.15rem;
+    }
+
+    .roadmap-step-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.28rem;
+      padding-bottom: 0.1rem;
+    }
+
+    .roadmap-step-block.is-current .roadmap-quiz-btn:not(:disabled) {
+      border-color: color-mix(in srgb, var(--accent), transparent 40%);
+    }
+
+    .roadmap-step {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.5rem 0.55rem;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 0.78rem;
+      line-height: 1.25;
+      text-align: left;
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition), color var(--transition), box-shadow var(--transition);
+    }
+
+    .roadmap-step:hover {
+      background: rgba(255, 255, 255, 0.55);
+      color: var(--text);
+      border-color: var(--border-soft);
+    }
+
+    .roadmap-step:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .roadmap-step-number {
+      width: 1.35rem;
+      height: 1.35rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      border-radius: 999px;
+      border: 1px solid var(--drop-border);
+      color: var(--muted);
+      font-size: 0.62rem;
+      font-weight: 700;
+    }
+
+    .roadmap-step-label {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .roadmap-step.is-complete {
+      color: rgba(29, 53, 87, 0.58);
+    }
+
+    html[data-theme="warm"] .roadmap-step.is-complete {
+      color: rgba(62, 57, 35, 0.58);
+    }
+
+    .roadmap-step.is-complete .roadmap-step-number {
+      background: rgba(255, 255, 255, 0.35);
+      border-color: rgba(69, 123, 157, 0.28);
+    }
+
+    .roadmap-step.is-active {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.72);
+      border-color: var(--border-soft);
+      font-weight: 700;
+      box-shadow: 0 6px 20px rgba(29, 53, 87, 0.08);
+    }
+
+    html[data-theme="warm"] .roadmap-step.is-active {
+      box-shadow: 0 6px 20px rgba(62, 57, 35, 0.08);
+    }
+
+    .roadmap-step.is-active .roadmap-step-number {
+      background: var(--accent);
+      color: var(--accent-text);
+      border-color: var(--accent);
+    }
+
+    .roadmap-step.is-upcoming {
+      opacity: 0.78;
+    }
+
+    .roadmap-quiz-btn {
+      width: 100%;
+      font-family: var(--font);
+      font-size: 0.68rem;
+      font-weight: 700;
+      margin: 0;
+      padding: 0.38rem 0.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-soft);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition), opacity var(--transition);
+      text-align: center;
+      letter-spacing: 0.02em;
+    }
+
+    .roadmap-quiz-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.88);
+      border-color: color-mix(in srgb, var(--accent), transparent 35%);
+    }
+
+    .roadmap-quiz-btn:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .roadmap-quiz-btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    .study-inner {
+      width: 100%;
+      max-width: var(--read-width);
+      flex: 0 1 auto;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      transition: max-width var(--layout-duration) var(--layout-ease);
+    }
+
+    #main-panel {
+      font-size: 0.8125rem;
+      line-height: 1.62;
+      transition: font-size var(--layout-duration) var(--layout-ease);
+    }
+
+    html[data-study-scale="2x"] #main-panel {
+      font-size: 1.0625rem;
+      line-height: 1.64;
+    }
+
+    html[data-study-scale="3x"] #main-panel {
+      font-size: 1.375rem;
+      line-height: 1.66;
+    }
+
+    .study-focus-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .study-focus-header:has(#progress-area[hidden]) {
+      margin-bottom: 0;
+      gap: 0;
+    }
+
+    .progress-row {
+      margin: 0;
+    }
+
+    .progress-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0 0 0.45rem;
+    }
+
+    .progress-track {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+      border: 1px solid var(--border-soft);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: var(--accent);
+      transition: width var(--transition);
+    }
+
+    .content-panel {
+      flex: 0 1 auto;
+      width: 100%;
+      height: auto;
+      min-height: 14rem;
+      padding: clamp(1.5rem, 3vw, 2.25rem);
+      border-radius: var(--radius);
+      background: var(--surface-strong);
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(12px);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .section-title {
+      font-size: 1.65em;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      margin: 0 0 0.85em;
+      color: var(--logo-ink);
+    }
+
+    .summary-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+    }
+
+    /* Markdown output (marked.js + DOMPurify) — high-contrast, scannable */
+    .summary-flow .md-content {
+      width: 100%;
+      max-width: min(var(--content-measure), 100%);
+      color: var(--text);
+    }
+
+    .summary-flow .md-content > *:first-child {
+      margin-top: 0;
+    }
+
+    .summary-flow .md-content > *:last-child {
+      margin-bottom: 0;
+    }
+
+    .summary-flow .md-content h1,
+    .summary-flow .md-content h2,
+    .summary-flow .md-content h3 {
+      font-weight: 700;
+      line-height: 1.3;
+      margin: 1.25rem 0 0.65rem;
+      color: var(--text);
+      letter-spacing: 0.01em;
+    }
+
+    .summary-flow .md-content h1 { font-size: 1.35em; }
+    .summary-flow .md-content h2 { font-size: 1.2em; }
+    .summary-flow .md-content h3 { font-size: 1.08em; }
+
+    .summary-flow .md-content p {
+      margin: 0 0 0.85rem;
+      line-height: 1.65;
+    }
+
+    .summary-flow .md-content ul,
+    .summary-flow .md-content ol {
+      margin: 0 0 0.85rem;
+      padding-left: 1.35rem;
+    }
+
+    .summary-flow .md-content li {
+      margin-bottom: 0.4rem;
+      line-height: 1.6;
+    }
+
+    .summary-flow .md-content li > ul,
+    .summary-flow .md-content li > ol {
+      margin-top: 0.35rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .summary-flow .md-content strong {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .summary-flow .md-content hr {
+      border: none;
+      border-top: 2px solid var(--drop-border);
+      margin: 1.25rem 0;
+      opacity: 0.85;
+    }
+
+    .summary-flow .md-content blockquote {
+      margin: 0 0 0.85rem;
+      padding: 0.5rem 0 0.5rem 1rem;
+      border-left: 4px solid var(--accent);
+      background: rgba(0, 0, 0, 0.04);
+      color: var(--text);
+    }
+
+    html[data-theme="teal"] .summary-flow .md-content blockquote {
+      background: rgba(29, 53, 87, 0.06);
+    }
+
+    html[data-theme="warm"] .summary-flow .md-content blockquote {
+      background: rgba(62, 57, 35, 0.07);
+    }
+
+    .summary-flow .md-content .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin: 0 0 1rem;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 8px;
+      border: 2px solid var(--accent);
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .summary-flow .md-content table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95em;
+      min-width: 12rem;
+    }
+
+    .summary-flow .md-content th,
+    .summary-flow .md-content td {
+      padding: 0.55rem 0.75rem;
+      text-align: left;
+      border: 1px solid var(--drop-border);
+      vertical-align: top;
+    }
+
+    .summary-flow .md-content thead th {
+      background: var(--accent);
+      color: var(--accent-text);
+      font-weight: 600;
+      border-color: var(--accent);
+    }
+
+    .summary-flow .md-content tbody tr:nth-child(even) {
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    .summary-flow .md-content pre {
+      margin: 0 0 0.85rem;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--drop-border);
+      background: rgba(0, 0, 0, 0.05);
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.5;
+    }
+
+    .summary-flow .md-content code {
+      font-family: ui-monospace, "Cascadia Code", "Segoe UI Mono", Consolas, monospace;
+      font-size: 0.9em;
+      padding: 0.12em 0.35em;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    .summary-flow .md-content pre code {
+      padding: 0;
+      background: none;
+      font-size: inherit;
+    }
+
+    .text-block {
+      margin: 0;
+      max-width: min(var(--content-measure), 100%);
+      transition: max-width var(--layout-duration) var(--layout-ease);
+    }
+
+    .text-block.intro-failure {
+      color: var(--muted);
+      font-size: 1em;
+    }
+
+    ul.key-list {
+      margin: 0;
+      padding-left: 1.35rem;
+    }
+
+    ul.key-list li {
+      margin-bottom: 0.45rem;
+      max-width: min(var(--content-measure), 100%);
+      transition: max-width var(--layout-duration) var(--layout-ease);
+    }
+
+    ul.key-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    .text-block strong {
+      font-weight: 700;
+    }
+
+    .state-message {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1em;
+      line-height: 1.6;
+    }
+
+    .nav-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 1rem 0 1.35rem;
+      background: linear-gradient(to top, color-mix(in srgb, var(--bg) 88%, transparent) 65%, transparent);
+      border-top: 1px solid var(--border-soft);
+      backdrop-filter: blur(10px);
+      z-index: 15;
+    }
+
+    .nav-inner {
+      width: min(100% - 2rem, var(--container));
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      transition: max-width var(--layout-duration) var(--layout-ease);
+    }
+
+    .nav-btn {
+      font-family: var(--font);
+      font-size: 0.82rem;
+      font-weight: 600;
+      min-width: 5.5rem;
+      padding: 0.52rem 0.95rem;
+      border: none;
+      border-radius: var(--radius-btn);
+      background: var(--accent);
+      color: var(--accent-text);
+      cursor: pointer;
+      transition: filter var(--transition), opacity var(--transition);
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      filter: brightness(0.97);
+    }
+
+    .nav-btn:focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 3px;
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .summary-flow .katex-display,
+    .md-content .katex-display {
+      margin: 0.75rem 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .quiz-prompt .katex,
+    .quiz-option-label .katex {
+      font-size: 1em;
+    }
+
+    /* --- Section quiz (ADHD-friendly: one step at a time, soft wrong-state) --- */
+
+    #quiz-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1em;
+      width: 100%;
+      max-width: min(var(--content-measure), 100%);
+    }
+
+    .quiz-progress {
+      font-size: 0.92em;
+      font-weight: 600;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .quiz-prompt {
+      font-size: 1.08em;
+      font-weight: 600;
+      line-height: 1.45;
+      margin: 0;
+      color: var(--text);
+    }
+
+    .quiz-fieldset {
+      border: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .quiz-legend {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .quiz-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-btn);
+      border: 2px solid var(--drop-border);
+      background: rgba(255, 255, 255, 0.45);
+      cursor: pointer;
+      transition: border-color var(--transition), background var(--transition);
+    }
+
+    .quiz-option:has(input:focus-visible) {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .quiz-option input {
+      margin-top: 0.2rem;
+      flex-shrink: 0;
+      width: 1.15rem;
+      height: 1.15rem;
+      accent-color: var(--accent);
+    }
+
+    .quiz-option-label {
+      flex: 1;
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
+    .quiz-option--correct {
+      border-color: #2a9d6f;
+      background: rgba(42, 157, 111, 0.14);
+    }
+
+    html[data-theme="warm"] .quiz-option--correct {
+      border-color: #5a9e7a;
+      background: rgba(90, 158, 122, 0.18);
+    }
+
+    .quiz-option--wrong-soft {
+      border-color: rgba(180, 120, 90, 0.65);
+      background: rgba(200, 150, 120, 0.12);
+    }
+
+    html[data-theme="teal"] .quiz-option--wrong-soft {
+      border-color: rgba(168, 90, 90, 0.45);
+      background: rgba(168, 90, 90, 0.08);
+    }
+
+    .quiz-option--muted {
+      opacity: 0.62;
+    }
+
+    /* After “Check answer”: choices left, explanations right (stacks on small screens). */
+    .quiz-answer-review {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(11.5rem, 36%);
+      gap: 1rem 1.35rem;
+      align-items: start;
+    }
+
+    .quiz-answer-review__left {
+      min-width: 0;
+    }
+
+    .quiz-answer-review__right {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      min-width: 0;
+    }
+
+    .quiz-answer-review__right .quiz-feedback {
+      margin: 0;
+    }
+
+    .quiz-feedback {
+      margin: 0;
+      padding: 0.75em 0.95em;
+      border-radius: var(--radius-btn);
+      background: rgba(0, 0, 0, 0.04);
+      border: 1px solid var(--drop-border);
+      font-size: 0.95em;
+      line-height: 1.55;
+      color: var(--text);
+    }
+
+    .quiz-feedback strong {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 0.78em;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+
+    .quiz-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    .quiz-btn-primary {
+      font-family: var(--font);
+      font-size: 1em;
+      font-weight: 600;
+      padding: 0.62em 1.1em;
+      border: none;
+      border-radius: var(--radius-btn);
+      background: var(--accent);
+      color: var(--accent-text);
+      cursor: pointer;
+      transition: filter var(--transition), opacity var(--transition);
+    }
+
+    .quiz-btn-primary:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .quiz-btn-primary:hover:not(:disabled) {
+      filter: brightness(0.97);
+    }
+
+    .quiz-btn-secondary {
+      font-family: var(--font);
+      font-size: 1em;
+      font-weight: 600;
+      padding: 0.62em 1.1em;
+      border: 2px solid var(--accent);
+      border-radius: var(--radius-btn);
+      background: rgba(255, 255, 255, 0.5);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .quiz-score {
+      font-size: 1.28em;
+      font-weight: 700;
+      margin: 0.25em 0 0.45em;
+      color: var(--text);
+    }
+
+    .quiz-error {
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 980px) {
+      .study-layout {
+        grid-template-columns: 1fr;
+        max-width: var(--read-width);
+      }
+
+      .study-roadmap {
+        position: static;
+        padding: 1rem 1.1rem;
+      }
+
+      .roadmap-steps {
+        max-height: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(6.75rem, 1fr));
+        gap: 0.45rem;
+        padding-right: 0;
+      }
+
+      .roadmap-step {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page-shell.study-page-shell {
+        width: min(100% - 1.15rem, var(--container));
+        padding-top: 0.85rem;
+      }
+
+      .quiz-answer-review {
+        grid-template-columns: 1fr;
+      }
+
+      .study-site-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-bottom: 1.35rem;
+      }
+
+      .study-header-toolbar {
+        width: 100%;
+        justify-content: flex-end;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .roadmap-title {
+        font-size: 0.9rem;
+      }
+
+      .roadmap-steps {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 0.2rem;
+        gap: 0.45rem;
+      }
+
+      .roadmap-step-block {
+        flex: 0 0 auto;
+        min-width: 6.5rem;
+      }
+
+      .roadmap-step {
+        min-width: 0;
+      }
+
+      .roadmap-step-label {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell study-page-shell">
+    <header class="site-header study-site-header">
+      <div class="study-header-left">
+        <a class="brand" href="/" aria-label="Bloom Study home">
+          <span class="bloom-logo" aria-hidden="true">
+            <span class="logo-book">
+              <span class="logo-page logo-page-left"></span>
+              <span class="logo-page logo-page-right"></span>
+              <span class="logo-spine"></span>
+            </span>
+            <span class="logo-petal logo-petal-left"></span>
+            <span class="logo-petal logo-petal-right"></span>
+            <span class="logo-drop"></span>
+          </span>
+          <span class="brand-name">
+            <strong>Bloom</strong>
+            <span>Study</span>
+          </span>
+        </a>
+        <a class="study-back-home" href="/">← Back to home</a>
+      </div>
+      <div class="study-header-toolbar" role="toolbar" aria-label="Reading display">
+        <div class="study-menu-anchor">
+          <button type="button" class="study-tool-btn" id="btn-theme-menu" aria-expanded="false" aria-haspopup="true" aria-controls="popover-theme" title="Choose calm or warm colors for the whole study page.">Theme</button>
+          <div class="study-popover" id="popover-theme" role="group" aria-label="Theme" hidden>
+            <p class="study-popover-lead">Color mood</p>
+            <button type="button" class="study-popover-option" id="theme-teal" aria-pressed="true">Calm (cool blues)</button>
+            <button type="button" class="study-popover-option" id="theme-warm" aria-pressed="false">Warm (soft paper)</button>
+          </div>
+        </div>
+        <div class="study-menu-anchor">
+          <button type="button" class="study-tool-btn" id="btn-text-menu" aria-expanded="false" aria-haspopup="true" aria-controls="popover-text" title="Change how large the summary and quiz text appears in the reading area.">Text</button>
+          <div class="study-popover" id="popover-text" role="group" aria-label="Text size" hidden>
+            <p class="study-popover-lead">Reading size</p>
+            <button type="button" class="study-popover-option" id="text-1x" aria-pressed="true">Standard (1×)</button>
+            <button type="button" class="study-popover-option" id="text-2x" aria-pressed="false">Comfortable (2×)</button>
+            <button type="button" class="study-popover-option" id="text-3x" aria-pressed="false">Large (3×)</button>
+          </div>
+        </div>
+        <button type="button" class="study-tool-btn study-tool-btn--focus" id="btn-focus-mode" aria-pressed="false" title="Hide menus and sidebars so only the reading panel stays on screen.">Focus</button>
+      </div>
+    </header>
+
+    <div class="study-workspace">
+      <div class="study-layout">
+        <aside class="study-roadmap" id="study-roadmap" aria-label="Study roadmap">
+          <p class="roadmap-eyebrow">Current PDF</p>
+          <h2 class="roadmap-title" id="roadmap-title">Study session</h2>
+          <div class="roadmap-progress" id="roadmap-progress" hidden>
+            <div class="roadmap-progress-row">
+              <span id="roadmap-progress-label">Section 1 of 1</span>
+              <strong id="roadmap-progress-percent">0%</strong>
+            </div>
+            <div class="roadmap-track" aria-hidden="true">
+              <div class="roadmap-fill" id="roadmap-fill"></div>
+            </div>
+          </div>
+          <div class="roadmap-steps-header">
+            <h3>Study steps</h3>
+          </div>
+          <div class="roadmap-steps" id="roadmap-steps" role="list"></div>
+        </aside>
+
+        <div class="study-inner">
+          <div class="study-focus-header">
+            <header class="progress-row" id="progress-area" hidden>
+              <p class="progress-label" id="progress-label" aria-live="polite"></p>
+              <div class="progress-track" role="progressbar" aria-valuemin="1" aria-valuemax="1" aria-valuenow="1" id="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+              </div>
+            </header>
+          </div>
+
+          <main class="content-panel" id="main-panel" aria-live="polite">
+            <div id="study-panel">
+              <h1 class="section-title" id="section-title"></h1>
+              <div class="summary-flow" id="summary-root"></div>
+              <p class="state-message" id="state-message" hidden></p>
+            </div>
+            <div id="quiz-panel" hidden></div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="study-focus-exit" id="btn-exit-focus" hidden title="Bring back navigation, roadmap, and section controls.">Exit focus</button>
+
+  <nav class="nav-bar" aria-label="Section navigation">
+    <div class="nav-inner">
+      <button type="button" class="nav-btn" id="btn-prev" disabled>Previous</button>
+      <button type="button" class="nav-btn" id="btn-next" disabled>Next</button>
+    </div>
+  </nav>
+
+  <!-- Markdown render (study summaries): marked + DOMPurify (same role as react-markdown / flutter_markdown in SPA stacks) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var storageKey = "study-theme";
+      var textSizeStorageKey = "study-text-size";
+      var preferenceSyncReady = false;
+      var applyingServerPreferences = false;
+
+      function setTheme(name) {
+        root.setAttribute("data-theme", name);
+        document.getElementById("theme-teal").setAttribute("aria-pressed", name === "teal" ? "true" : "false");
+        document.getElementById("theme-warm").setAttribute("aria-pressed", name === "warm" ? "true" : "false");
+        try { localStorage.setItem(storageKey, name); } catch (e) {}
+        if (preferenceSyncReady && !applyingServerPreferences) {
+          savePreferences({ theme: name });
+        }
+      }
+
+      function setTextSize(size) {
+        if (size === "medium") size = "1x";
+        if (size === "large") size = "2x";
+        if (size === "xlarge") size = "3x";
+        if (size === "comfortable") size = "1x";
+        if (size !== "1x" && size !== "2x" && size !== "3x") {
+          size = "1x";
+        }
+        root.setAttribute("data-study-scale", size);
+        document.getElementById("text-1x").setAttribute("aria-pressed", size === "1x" ? "true" : "false");
+        document.getElementById("text-2x").setAttribute("aria-pressed", size === "2x" ? "true" : "false");
+        document.getElementById("text-3x").setAttribute("aria-pressed", size === "3x" ? "true" : "false");
+        try { localStorage.setItem(textSizeStorageKey, size); } catch (e) {}
+        if (preferenceSyncReady && !applyingServerPreferences) {
+          savePreferences({ textSize: size });
+        }
+      }
+
+      function savePreferences(partial) {
+        var body = {
+          theme: partial.theme || root.getAttribute("data-theme") || "teal",
+          textSize: partial.textSize || root.getAttribute("data-study-scale") || "1x",
+          preferredStudyLanding: "resume"
+        };
+        fetch("/me/preferences", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        }).catch(function () {});
+      }
+
+      function loadProfilePreferences() {
+        fetch("/me")
+          .then(function (res) {
+            if (res.status === 401) {
+              window.location.href = "/";
+              return null;
+            }
+            if (!res.ok) return null;
+            return res.json();
+          })
+          .then(function (profile) {
+            if (!profile || !profile.preferences) return;
+            applyingServerPreferences = true;
+            if (profile.preferences.theme) setTheme(profile.preferences.theme);
+            if (profile.preferences.textSize) setTextSize(profile.preferences.textSize);
+            applyingServerPreferences = false;
+          })
+          .finally(function () {
+            preferenceSyncReady = true;
+          });
+      }
+
+      var saved = null;
+      try { saved = localStorage.getItem(storageKey); } catch (e) {}
+      if (saved === "warm" || saved === "teal") setTheme(saved);
+
+      var savedTextSize = null;
+      try { savedTextSize = localStorage.getItem(textSizeStorageKey); } catch (e) {}
+      setTextSize(savedTextSize || "1x");
+
+      var popoverTheme = document.getElementById("popover-theme");
+      var popoverText = document.getElementById("popover-text");
+      var btnThemeMenu = document.getElementById("btn-theme-menu");
+      var btnTextMenu = document.getElementById("btn-text-menu");
+      var btnFocusMode = document.getElementById("btn-focus-mode");
+      var btnExitFocus = document.getElementById("btn-exit-focus");
+
+      function closePopovers() {
+        popoverTheme.setAttribute("hidden", "");
+        popoverText.setAttribute("hidden", "");
+        btnThemeMenu.setAttribute("aria-expanded", "false");
+        btnTextMenu.setAttribute("aria-expanded", "false");
+      }
+
+      function togglePopover(which) {
+        if (which === "theme") {
+          var willOpen = popoverTheme.hasAttribute("hidden");
+          closePopovers();
+          if (willOpen) {
+            popoverTheme.removeAttribute("hidden");
+            btnThemeMenu.setAttribute("aria-expanded", "true");
+          }
+        } else if (which === "text") {
+          var willOpen2 = popoverText.hasAttribute("hidden");
+          closePopovers();
+          if (willOpen2) {
+            popoverText.removeAttribute("hidden");
+            btnTextMenu.setAttribute("aria-expanded", "true");
+          }
+        }
+      }
+
+      function isFocusMode() {
+        return root.getAttribute("data-focus-mode") === "true";
+      }
+
+      function setFocusMode(on) {
+        if (on) {
+          closePopovers();
+          root.setAttribute("data-focus-mode", "true");
+          btnFocusMode.setAttribute("aria-pressed", "true");
+          btnExitFocus.removeAttribute("hidden");
+        } else {
+          root.removeAttribute("data-focus-mode");
+          btnFocusMode.setAttribute("aria-pressed", "false");
+          btnExitFocus.setAttribute("hidden", "");
+        }
+      }
+
+      document.getElementById("btn-theme-menu").addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        togglePopover("theme");
+      });
+      document.getElementById("btn-text-menu").addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        togglePopover("text");
+      });
+
+      document.addEventListener("click", function (ev) {
+        var t = ev.target;
+        if (t && t.closest && t.closest(".study-header-toolbar")) return;
+        closePopovers();
+      });
+
+      document.getElementById("theme-teal").addEventListener("click", function () {
+        setTheme("teal");
+        closePopovers();
+      });
+      document.getElementById("theme-warm").addEventListener("click", function () {
+        setTheme("warm");
+        closePopovers();
+      });
+
+      document.getElementById("text-1x").addEventListener("click", function () {
+        setTextSize("1x");
+        closePopovers();
+      });
+      document.getElementById("text-2x").addEventListener("click", function () {
+        setTextSize("2x");
+        closePopovers();
+      });
+      document.getElementById("text-3x").addEventListener("click", function () {
+        setTextSize("3x");
+        closePopovers();
+      });
+
+      btnFocusMode.addEventListener("click", function () {
+        setFocusMode(!isFocusMode());
+      });
+      btnExitFocus.addEventListener("click", function () {
+        setFocusMode(false);
+      });
+
+      var params = new URLSearchParams(window.location.search);
+      var sessionId = params.get("session");
+
+      var progressArea = document.getElementById("progress-area");
+      var progressLabel = document.getElementById("progress-label");
+      var progressTrack = document.getElementById("progress-track");
+      var progressFill = document.getElementById("progress-fill");
+      var sectionTitleEl = document.getElementById("section-title");
+      var summaryRoot = document.getElementById("summary-root");
+      var stateMessage = document.getElementById("state-message");
+      var btnPrev = document.getElementById("btn-prev");
+      var btnNext = document.getElementById("btn-next");
+      var studyPanel = document.getElementById("study-panel");
+      var quizPanel = document.getElementById("quiz-panel");
+      var roadmapTitle = document.getElementById("roadmap-title");
+      var roadmapProgress = document.getElementById("roadmap-progress");
+      var roadmapProgressLabel = document.getElementById("roadmap-progress-label");
+      var roadmapProgressPercent = document.getElementById("roadmap-progress-percent");
+      var roadmapFill = document.getElementById("roadmap-fill");
+      var roadmapSteps = document.getElementById("roadmap-steps");
+
+      var quizOpen = false;
+      /** @type {object | null} */
+      var sessionViewSnapshot = null;
+      var roadmapTotalSections = 0;
+      /** @type {object | null} */
+      var quizRuntime = null;
+
+      var SUMMARY_UNAVAILABLE = "Summary unavailable";
+
+      var failureMessages = {
+        NONE: "",
+        NOT_SUMMARIZED_OVER_CAP: "This section was not summarized (upload limit).",
+        MISSING_API_KEY: "Summaries need an API key to be configured.",
+        MODEL_NOT_CONFIGURED: "The summarization model is not configured.",
+        RATE_LIMITED: "The service was rate-limited. Try again in a little while.",
+        API_KEY_REJECTED: "The API key was not accepted.",
+        OPENROUTER_HTTP_ERROR: "The summary service returned an error.",
+        OPENROUTER_ERROR_FIELD: "The summary service reported an error.",
+        EMPTY_HTTP_BODY: "No response came back from the summary service.",
+        MISSING_MESSAGE_CONTENT: "The summary response was incomplete.",
+        UNEXPECTED_MESSAGE_CONTENT_SHAPE: "The summary response could not be read.",
+        EMPTY_ASSISTANT_MESSAGE: "The summary came back empty.",
+        RESPONSE_JSON_PARSE_ERROR: "The summary response could not be parsed.",
+        NETWORK_OR_TIMEOUT: "The network timed out or failed.",
+        BATCH_INTERRUPTED: "Summarization was interrupted.",
+        BATCH_OUTPUT_MISSING_SLOT: "Part of the batch summary was missing.",
+        UNKNOWN: "The summary could not be generated."
+      };
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      /**
+       * Typeset $...$, $$...$$, \\(...\\), \\[...\\] after markdown/HTML is in the DOM.
+       */
+      function renderMathInStudy(el) {
+        if (!el || typeof renderMathInElement === "undefined") return;
+        try {
+          renderMathInElement(el, {
+            delimiters: [
+              { left: "$$", right: "$$", display: true },
+              { left: "$", right: "$", display: false },
+              { left: "\\(", right: "\\)", display: false },
+              { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+          });
+        } catch (e) {}
+      }
+
+      function formatInlineBold(text) {
+        var parts = String(text).split(/\*\*([^*]+)\*\*/g);
+        var out = "";
+        for (var i = 0; i < parts.length; i++) {
+          if (i % 2 === 0) {
+            out += escapeHtml(parts[i]);
+          } else {
+            out += "<strong>" + escapeHtml(parts[i]) + "</strong>";
+          }
+        }
+        return out;
+      }
+
+      if (typeof marked !== "undefined" && marked.setOptions) {
+        marked.setOptions({
+          gfm: true,
+          breaks: false
+        });
+      }
+
+      /**
+       * Wraps bare <table> outputs from the markdown parser so horizontal scroll works on small screens.
+       */
+      function wrapTables(container) {
+        var tables = container.querySelectorAll("table");
+        for (var i = 0; i < tables.length; i++) {
+          var table = tables[i];
+          if (table.parentNode && table.parentNode.classList.contains("table-wrap")) continue;
+          var wrap = document.createElement("div");
+          wrap.className = "table-wrap";
+          table.parentNode.insertBefore(wrap, table);
+          wrap.appendChild(table);
+        }
+      }
+
+      function renderSummaryMarkdownToHtml(markdown) {
+        if (typeof marked === "undefined" || typeof DOMPurify === "undefined") {
+          return null;
+        }
+        var raw = marked.parse(String(markdown), { async: false });
+        return DOMPurify.sanitize(raw, {
+          USE_PROFILES: { html: true },
+          ADD_ATTR: ["target"],
+          ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/i
+        });
+      }
+
+      function renderSummaryPlainFallback(trimmed) {
+        var paras = trimmed.split(/\n\s*\n/).map(function (x) { return x.trim(); }).filter(Boolean);
+        for (var i = 0; i < paras.length; i++) {
+          var p = document.createElement("p");
+          p.className = "text-block";
+          p.innerHTML = formatInlineBold(paras[i].replace(/\s+/g, " "));
+          summaryRoot.appendChild(p);
+        }
+      }
+
+      function renderSummary(summary, failureReason) {
+        summaryRoot.innerHTML = "";
+        var trimmed = (summary || "").trim();
+        var isUnavailable = !trimmed || trimmed === SUMMARY_UNAVAILABLE;
+        var reasonText = failureReason && failureMessages[failureReason] ? failureMessages[failureReason] : "";
+
+        if (isUnavailable && reasonText) {
+          var p = document.createElement("p");
+          p.className = "text-block intro-failure";
+          p.innerHTML = formatInlineBold(reasonText);
+          summaryRoot.appendChild(p);
+          return;
+        }
+
+        if (isUnavailable) {
+          var p2 = document.createElement("p");
+          p2.className = "text-block intro-failure";
+          p2.textContent = SUMMARY_UNAVAILABLE + ".";
+          summaryRoot.appendChild(p2);
+          return;
+        }
+
+        var mdHtml = renderSummaryMarkdownToHtml(trimmed);
+        if (mdHtml) {
+          var box = document.createElement("div");
+          box.className = "md-content";
+          box.innerHTML = mdHtml;
+          wrapTables(box);
+          summaryRoot.appendChild(box);
+        } else {
+          renderSummaryPlainFallback(trimmed);
+        }
+
+        if (failureReason && failureReason !== "NONE" && reasonText && !isUnavailable) {
+          var note = document.createElement("p");
+          note.className = "text-block intro-failure";
+          note.innerHTML = formatInlineBold("Note: " + reasonText);
+          summaryRoot.appendChild(note);
+        }
+        renderMathInStudy(summaryRoot);
+      }
+
+      function loadRoadmapTitle() {
+        if (!sessionId || !sessionId.trim()) return;
+        fetch("/me/sessions")
+          .then(function (res) {
+            if (!res.ok) return [];
+            return res.json();
+          })
+          .then(function (sessions) {
+            if (!sessions || !sessions.length) return;
+            for (var i = 0; i < sessions.length; i++) {
+              if (sessions[i].sessionId === sessionId) {
+                roadmapTitle.textContent = sessions[i].originalFileName || "Study session";
+                return;
+              }
+            }
+          })
+          .catch(function () {});
+      }
+
+      function getQuizFlags(data, total) {
+        var arr = data && data.quizAvailableBySection;
+        if (Array.isArray(arr) && arr.length === total) {
+          return arr.map(function (x) { return x === true; });
+        }
+        var idx = Number(data && data.currentIndex) || 0;
+        var q = data && data.quizAvailable === true;
+        var out = [];
+        for (var j = 0; j < total; j++) {
+          out.push(j === idx && q);
+        }
+        return out;
+      }
+
+      function getQuizSectionIndex() {
+        if (quizRuntime && typeof quizRuntime.sectionIndex === "number") {
+          return quizRuntime.sectionIndex;
+        }
+        return Number(sessionViewSnapshot && sessionViewSnapshot.currentIndex) || 0;
+      }
+
+      function syncRoadmapQuizButtons(data) {
+        var total = Number(data.totalSections) || 0;
+        var flags = getQuizFlags(data, total);
+        for (var i = 0; i < total; i++) {
+          var qbtn = roadmapSteps.querySelector(".roadmap-quiz-btn[data-quiz-section=\"" + i + "\"]");
+          if (qbtn) {
+            qbtn.disabled = !flags[i];
+            qbtn.setAttribute("aria-disabled", flags[i] ? "false" : "true");
+          }
+        }
+      }
+
+      function renderRoadmapSteps(total, data) {
+        roadmapSteps.innerHTML = "";
+        roadmapTotalSections = total;
+        var flags = getQuizFlags(data, total);
+        for (var i = 0; i < total; i++) {
+          var block = document.createElement("div");
+          block.className = "roadmap-step-block";
+          block.setAttribute("role", "listitem");
+
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "roadmap-step";
+          btn.setAttribute("data-section-index", String(i));
+          btn.innerHTML =
+            "<span class=\"roadmap-step-number\">" + (i + 1) + "</span>" +
+            "<span class=\"roadmap-step-label\">Section " + (i + 1) + "</span>";
+          btn.addEventListener("click", function () {
+            var index = Number(this.getAttribute("data-section-index"));
+            openRoadmapSection(index);
+          });
+          block.appendChild(btn);
+
+          var qbtn = document.createElement("button");
+          qbtn.type = "button";
+          qbtn.className = "roadmap-quiz-btn";
+          qbtn.setAttribute("data-quiz-section", String(i));
+          qbtn.textContent = "Quiz " + (i + 1);
+          qbtn.disabled = !flags[i];
+          qbtn.setAttribute("aria-disabled", flags[i] ? "false" : "true");
+          qbtn.title = flags[i] ? "Open quiz for this section" : "Quiz not available for this section";
+          qbtn.addEventListener("click", function (ev) {
+            ev.stopPropagation();
+            var si = Number(this.getAttribute("data-quiz-section"));
+            if (Number.isNaN(si)) return;
+            openSectionQuiz(si);
+          });
+          block.appendChild(qbtn);
+
+          roadmapSteps.appendChild(block);
+        }
+      }
+
+      function updateRoadmap(data) {
+        var total = Number(data.totalSections) || 0;
+        var idx = Number(data.currentIndex) || 0;
+        if (total <= 0) {
+          roadmapProgress.hidden = true;
+          roadmapSteps.innerHTML = "";
+          roadmapTotalSections = 0;
+          return;
+        }
+        if (roadmapTotalSections !== total) {
+          renderRoadmapSteps(total, data);
+        } else {
+          syncRoadmapQuizButtons(data);
+        }
+
+        var human = idx + 1;
+        var percent = Math.round((human / total) * 100);
+        roadmapProgress.hidden = false;
+        roadmapProgressLabel.textContent = "Section " + human + " of " + total;
+        roadmapProgressPercent.textContent = percent + "%";
+        roadmapFill.style.width = percent + "%";
+
+        var blocks = roadmapSteps.querySelectorAll(".roadmap-step-block");
+        var steps = roadmapSteps.querySelectorAll(".roadmap-step");
+        for (var bi = 0; bi < blocks.length; bi++) {
+          blocks[bi].classList.remove("is-current");
+        }
+        for (var i = 0; i < steps.length; i++) {
+          steps[i].classList.remove("is-complete", "is-active", "is-upcoming");
+          steps[i].removeAttribute("aria-current");
+          if (i < idx) {
+            steps[i].classList.add("is-complete");
+          } else if (i === idx) {
+            steps[i].classList.add("is-active");
+            steps[i].setAttribute("aria-current", "step");
+            if (blocks[i]) blocks[i].classList.add("is-current");
+          } else {
+            steps[i].classList.add("is-upcoming");
+          }
+        }
+      }
+
+      /**
+       * When the server is older than the roadmap "open section" API, POST .../sections/n/open returns 404
+       * (Spring JSON error body). Section 1 still appears to work because same-index clicks are skipped.
+       * Fall back to sequential next/previous calls, which exist on all versions.
+       */
+      function navigateRoadmapByNextPrev(targetIndex) {
+        if (!sessionId || !sessionId.trim() || !sessionViewSnapshot) {
+          return Promise.reject(new Error("missing state"));
+        }
+        function step() {
+          var cur = Number(sessionViewSnapshot.currentIndex) || 0;
+          if (cur === targetIndex) {
+            return Promise.resolve(null);
+          }
+          var dir = cur < targetIndex ? "next" : "previous";
+          return fetch("/session/" + encodeURIComponent(sessionId) + "/" + dir, { method: "POST" })
+            .then(function (res) {
+              if (res.status === 401) {
+                showState("Sign in again so we can save your place.");
+                window.setTimeout(function () { window.location.href = "/"; }, 900);
+                return null;
+              }
+              if (res.status === 404) {
+                showState("This study session was not found.");
+                return null;
+              }
+              if (!res.ok) throw new Error("bad status");
+              return res.json();
+            })
+            .then(function (data) {
+              if (!data) return null;
+              applyView(data);
+              return step();
+            });
+        }
+        return step();
+      }
+
+      function openRoadmapSection(index, onAfter) {
+        if (!sessionId || !sessionId.trim()) {
+          return Promise.resolve();
+        }
+        if (sessionViewSnapshot && index === Number(sessionViewSnapshot.currentIndex)) {
+          if (typeof onAfter === "function") {
+            window.setTimeout(onAfter, 0);
+          }
+          return Promise.resolve();
+        }
+        closeStudyQuiz();
+        return fetch(
+          "/session/" + encodeURIComponent(sessionId) + "/sections/" + index + "/open",
+          { method: "POST" }
+        )
+          .then(function (res) {
+            if (res.status === 401) {
+              showState("Sign in again so we can save your place.");
+              window.setTimeout(function () { window.location.href = "/"; }, 900);
+              return null;
+            }
+            if (res.status === 404) {
+              return res.text().then(function (body) {
+                var looksLikeMissingOpenEndpoint =
+                  body &&
+                  /^\s*\{/.test(body) &&
+                  body.indexOf('"path"') !== -1 &&
+                  body.indexOf("/open") !== -1;
+                if (looksLikeMissingOpenEndpoint) {
+                  return navigateRoadmapByNextPrev(index);
+                }
+                showState("This study session was not found.");
+                return null;
+              });
+            }
+            if (res.status === 400) {
+              showState("That section is not available for this session.");
+              return null;
+            }
+            if (!res.ok) throw new Error("bad status");
+            return res.json();
+          })
+          .then(function (data) {
+            if (data) applyView(data);
+            if (typeof onAfter === "function") {
+              var at = sessionViewSnapshot ? Number(sessionViewSnapshot.currentIndex) : NaN;
+              if (at === index) {
+                window.setTimeout(onAfter, 0);
+              }
+            }
+          })
+          .catch(function () {
+            showState("Could not open that section. Try again.");
+          });
+      }
+
+      function openSectionQuiz(sectionIndex) {
+        if (!sessionId || !sessionViewSnapshot) return;
+        var total = Number(sessionViewSnapshot.totalSections) || 0;
+        var flags = getQuizFlags(sessionViewSnapshot, total);
+        if (!flags[sectionIndex]) return;
+
+        function startLoad() {
+          openStudyQuizShell();
+          quizPanel.innerHTML = "<p class=\"quiz-progress\">Loading quiz…</p>";
+          fetch("/session/" + encodeURIComponent(sessionId) + "/sections/" + sectionIndex + "/quiz")
+            .then(function (res) {
+              if (res.status === 404 || res.status === 503) throw new Error("unavailable");
+              if (!res.ok) throw new Error("bad");
+              return res.json();
+            })
+            .then(function (payload) {
+              quizRuntime = {
+                phase: "answer",
+                sectionIndex: sectionIndex,
+                questions: payload.questions,
+                answerIndex: 0,
+                correctTally: 0
+              };
+              renderAnsweringStep();
+            })
+            .catch(function () {
+              quizPanel.innerHTML = "<p class=\"quiz-error\">Could not load the quiz. Try again in a moment.</p><div class=\"quiz-actions\"><button type=\"button\" class=\"quiz-btn-secondary\" id=\"quiz-load-fail\">Back to section</button></div>";
+              document.getElementById("quiz-load-fail").addEventListener("click", function () {
+                closeStudyQuiz();
+              });
+            });
+        }
+
+        var cur = Number(sessionViewSnapshot.currentIndex) || 0;
+        if (cur === sectionIndex) {
+          startLoad();
+          return;
+        }
+        openRoadmapSection(sectionIndex, startLoad);
+      }
+
+      function closeStudyQuiz() {
+        quizOpen = false;
+        quizRuntime = null;
+        quizPanel.hidden = true;
+        quizPanel.innerHTML = "";
+        studyPanel.hidden = false;
+        if (sessionViewSnapshot && Number(sessionViewSnapshot.totalSections) > 0) {
+          var t = Number(sessionViewSnapshot.totalSections);
+          var ix = Number(sessionViewSnapshot.currentIndex) || 0;
+          btnPrev.disabled = ix <= 0;
+          btnNext.disabled = ix >= t - 1;
+        }
+      }
+
+      function showState(msg) {
+        closeStudyQuiz();
+        stateMessage.hidden = !msg;
+        stateMessage.textContent = msg || "";
+        sectionTitleEl.textContent = "";
+        summaryRoot.innerHTML = "";
+        progressArea.hidden = true;
+        btnPrev.disabled = true;
+        btnNext.disabled = true;
+        roadmapProgress.hidden = true;
+      }
+
+      function applyView(data) {
+        closeStudyQuiz();
+        sessionViewSnapshot = data;
+        stateMessage.hidden = true;
+        var total = Number(data.totalSections) || 0;
+        var idx = Number(data.currentIndex) || 0;
+
+        if (total <= 0) {
+          showState("This session has no sections to study.");
+          return;
+        }
+
+        progressArea.hidden = false;
+        var human = idx + 1;
+        progressLabel.textContent = "Section " + human + " / " + total;
+        progressTrack.setAttribute("aria-valuemax", String(total));
+        progressTrack.setAttribute("aria-valuenow", String(human));
+        progressFill.style.width = (100 * human / total) + "%";
+        updateRoadmap(data);
+
+        sectionTitleEl.textContent = "Section " + human;
+
+        var reason = data.summarizationFailureReason || "NONE";
+        renderSummary(data.currentSectionSummary, reason);
+
+        btnPrev.disabled = idx <= 0;
+        btnNext.disabled = idx >= total - 1;
+      }
+
+      function openStudyQuizShell() {
+        quizOpen = true;
+        quizRuntime = null;
+        studyPanel.hidden = true;
+        quizPanel.hidden = false;
+        btnPrev.disabled = true;
+        btnNext.disabled = true;
+      }
+
+      function readSelectedChoice() {
+        var r = quizPanel.querySelector("input[name=\"quiz-choice\"]:checked");
+        return r ? Number(r.value) : null;
+      }
+
+      function renderAnsweringStep() {
+        var qr = quizRuntime;
+        var qs = qr.questions;
+        var i = qr.answerIndex;
+        var n = qs.length;
+        var q = qs[i];
+        var hintId = "quiz-pick-hint";
+        var html = "";
+        html += "<p class=\"quiz-progress\" id=\"quiz-step-label\" tabindex=\"-1\">Question " + (i + 1) + " of " + n + "</p>";
+        html += "<p class=\"quiz-prompt\" id=\"quiz-prompt\">" + escapeHtml(q.prompt) + "</p>";
+        html += "<fieldset class=\"quiz-fieldset\"><legend class=\"quiz-legend\">Choices</legend>";
+        html += "<ul class=\"quiz-options\">";
+        for (var c = 0; c < q.choices.length; c++) {
+          var id = "quiz-opt-" + i + "-" + c;
+          html += "<li class=\"quiz-option\"><input type=\"radio\" name=\"quiz-choice\" id=\"" + id + "\" value=\"" + c + "\">";
+          html += "<label class=\"quiz-option-label\" for=\"" + id + "\">" + escapeHtml(q.choices[c]) + "</label></li>";
+        }
+        html += "</ul></fieldset>";
+        html += "<p class=\"quiz-error\" id=\"" + hintId + "\" hidden>Pick one option, then check your answer.</p>";
+        html += "<div class=\"quiz-actions\">";
+        html += "<button type=\"button\" class=\"quiz-btn-secondary\" id=\"quiz-cancel\">Back to section</button>";
+        html += "<button type=\"button\" class=\"quiz-btn-primary\" id=\"quiz-check-btn\">Check answer</button>";
+        html += "</div>";
+        quizPanel.innerHTML = html;
+        document.getElementById("quiz-cancel").addEventListener("click", function () {
+          closeStudyQuiz();
+        });
+        document.getElementById("quiz-check-btn").addEventListener("click", function () {
+          var sel = readSelectedChoice();
+          var hint = document.getElementById(hintId);
+          if (sel === null) {
+            hint.hidden = false;
+            return;
+          }
+          hint.hidden = true;
+          var secIdx = getQuizSectionIndex();
+          quizPanel.innerHTML = "<p class=\"quiz-progress\">Checking…</p>";
+          fetch(
+            "/session/" + encodeURIComponent(sessionId) + "/sections/" + secIdx + "/quiz/questions/" + i + "/verify",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ selectedIndex: sel })
+            }
+          )
+            .then(function (res) {
+              if (res.status === 404) throw new Error("missing");
+              if (!res.ok) throw new Error("bad");
+              return res.json();
+            })
+            .then(function (result) {
+              if (result.correct) {
+                qr.correctTally++;
+              }
+              renderQuestionFeedback(result);
+            })
+            .catch(function () {
+              quizPanel.innerHTML = "<p class=\"quiz-error\">Could not verify. Try again.</p><div class=\"quiz-actions\"><button type=\"button\" class=\"quiz-btn-secondary\" id=\"quiz-err-back\">Back to section</button></div>";
+              document.getElementById("quiz-err-back").addEventListener("click", function () {
+                closeStudyQuiz();
+              });
+            });
+        });
+        renderMathInStudy(quizPanel);
+        document.getElementById("quiz-step-label").focus();
+      }
+
+      function renderQuestionFeedback(result) {
+        var qr = quizRuntime;
+        var qs = qr.questions;
+        var i = qr.answerIndex;
+        var q = qs[i];
+        var n = qs.length;
+        var isLast = i >= n - 1;
+        var html = "";
+        html += "<div class=\"quiz-answer-review\">";
+        html += "<div class=\"quiz-answer-review__left\">";
+        html += "<p class=\"quiz-progress\">Question " + (i + 1) + " of " + n + "</p>";
+        html += "<p class=\"quiz-prompt\">" + escapeHtml(q.prompt) + "</p>";
+        html += "<ul class=\"quiz-options\">";
+        for (var c = 0; c < q.choices.length; c++) {
+          var classes = "quiz-option";
+          if (c === result.correctIndex) classes += " quiz-option--correct";
+          else if (c === result.selectedIndex && !result.correct) classes += " quiz-option--wrong-soft";
+          else classes += " quiz-option--muted";
+          html += "<li class=\"" + classes + "\"><span class=\"quiz-option-label\">" + escapeHtml(q.choices[c]) + "</span></li>";
+        }
+        html += "</ul></div>";
+        html += "<div class=\"quiz-answer-review__right\" role=\"region\" aria-label=\"Answer feedback\">";
+        html += "<div class=\"quiz-feedback\"><strong>Why the correct answer fits</strong><div style=\"margin-top:0.35rem\">" + escapeHtml(result.whyCorrect) + "</div></div>";
+        if (!result.correct && result.whyChosenWrong) {
+          html += "<div class=\"quiz-feedback\"><strong>About your choice</strong><div style=\"margin-top:0.35rem\">" + escapeHtml(result.whyChosenWrong) + "</div></div>";
+        }
+        html += "</div></div>";
+        html += "<div class=\"quiz-actions\">";
+        html += "<button type=\"button\" class=\"quiz-btn-primary\" id=\"quiz-after-feedback\">" + (isLast ? "View score" : "Next question") + "</button>";
+        html += "</div>";
+        quizPanel.innerHTML = html;
+        document.getElementById("quiz-after-feedback").addEventListener("click", function () {
+          if (isLast) {
+            renderScoreStep();
+          } else {
+            qr.answerIndex = i + 1;
+            renderAnsweringStep();
+          }
+        });
+        renderMathInStudy(quizPanel);
+      }
+
+      function renderScoreStep() {
+        var qr = quizRuntime;
+        var c = Number(qr.correctTally) || 0;
+        var t = qr.questions.length;
+        var idx = getQuizSectionIndex();
+        var totalSec = Number(sessionViewSnapshot.totalSections) || 0;
+        var atEnd = idx >= totalSec - 1;
+        var html = "";
+        html += "<p class=\"quiz-progress\">Quiz complete</p>";
+        html += "<p class=\"quiz-score\">You got " + c + " / " + t + "</p>";
+        html += "<div class=\"quiz-actions\">";
+        html += "<button type=\"button\" class=\"quiz-btn-secondary\" id=\"quiz-back-section\">Review section</button>";
+        if (!atEnd) {
+          html += "<button type=\"button\" class=\"quiz-btn-primary\" id=\"quiz-continue-next\">Continue to next section</button>";
+        } else {
+          html += "<button type=\"button\" class=\"quiz-btn-primary\" id=\"quiz-go-home\">Go home</button>";
+        }
+        html += "</div>";
+        quizPanel.innerHTML = html;
+        document.getElementById("quiz-back-section").addEventListener("click", function () {
+          closeStudyQuiz();
+        });
+        var cont = document.getElementById("quiz-continue-next");
+        if (cont) {
+          cont.addEventListener("click", function () {
+            closeStudyQuiz();
+            postNav("next");
+          });
+        }
+        var goh = document.getElementById("quiz-go-home");
+        if (goh) {
+          goh.addEventListener("click", function () {
+            window.location.href = "/";
+          });
+        }
+      }
+
+      function loadCurrent() {
+        if (!sessionId || !sessionId.trim()) {
+          showState("Add ?session=… to the URL to open a study session.");
+          return;
+        }
+
+        fetch("/session/" + encodeURIComponent(sessionId) + "/current")
+          .then(function (res) {
+            if (res.status === 401) {
+              showState("Sign in again so we can bring this study session back.");
+              window.setTimeout(function () { window.location.href = "/"; }, 900);
+              return null;
+            }
+            if (res.status === 404) {
+              showState("This study session was not found. It may have expired, or the link is incorrect.");
+              return null;
+            }
+            if (!res.ok) throw new Error("bad status");
+            return res.json();
+          })
+          .then(function (data) {
+            if (data) applyView(data);
+          })
+          .catch(function () {
+            showState("Something went wrong loading this session. Try uploading again from the home page.");
+          });
+      }
+
+      function postNav(which) {
+        if (!sessionId || !sessionId.trim()) return;
+        fetch("/session/" + encodeURIComponent(sessionId) + "/" + which, { method: "POST" })
+          .then(function (res) {
+            if (res.status === 401) {
+              showState("Sign in again so we can save your place.");
+              window.setTimeout(function () { window.location.href = "/"; }, 900);
+              return null;
+            }
+            if (res.status === 404) {
+              showState("This study session was not found.");
+              return null;
+            }
+            if (!res.ok) throw new Error("bad status");
+            return res.json();
+          })
+          .then(function (data) {
+            if (data) applyView(data);
+          })
+          .catch(function () {
+            showState("Could not change section. Check your connection and try again.");
+          });
+      }
+
+      btnPrev.addEventListener("click", function () { postNav("previous"); });
+      btnNext.addEventListener("click", function () { postNav("next"); });
+
+      function navKeyboardOk() {
+        var el = document.activeElement;
+        if (!el) return true;
+        var tag = el.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return false;
+        if (el.isContentEditable) return false;
+        return true;
+      }
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          if (!popoverTheme.hasAttribute("hidden") || !popoverText.hasAttribute("hidden")) {
+            closePopovers();
+            e.preventDefault();
+            return;
+          }
+          if (isFocusMode()) {
+            setFocusMode(false);
+            e.preventDefault();
+            return;
+          }
+        }
+        if (quizOpen && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+          e.preventDefault();
+          return;
+        }
+        if (!navKeyboardOk()) return;
+        if (e.key === "ArrowLeft" && !btnPrev.disabled) {
+          e.preventDefault();
+          postNav("previous");
+        } else if (e.key === "ArrowRight" && !btnNext.disabled) {
+          e.preventDefault();
+          postNav("next");
+        }
+      });
+
+      loadProfilePreferences();
+      loadRoadmapTitle();
+      loadCurrent();
+    })();
+  </script>
+</body>
+</html>

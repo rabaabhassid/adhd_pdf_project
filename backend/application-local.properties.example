@@ -1,0 +1,15 @@
+# Copy to application-local.properties in this folder (same directory as pom.xml) and set your key.
+# The real file is gitignored — do not commit it.
+openrouter.api.key=
+
+# Plain .\mvnw.cmd spring-boot:run uses the local H2 profile.
+# To use PostgreSQL instead:
+# 1. Start PostgreSQL and create the study_backend database/user.
+# 2. Run: .\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=postgres
+# 3. Uncomment/override these values to match your database.
+# spring.datasource.url=jdbc:postgresql://localhost:5432/study_backend
+# spring.datasource.username=study_backend
+# spring.datasource.password=study_backend
+
+# Set true when serving over HTTPS.
+study.auth.cookie-secure=false
